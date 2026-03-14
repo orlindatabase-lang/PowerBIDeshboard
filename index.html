@@ -947,17 +947,41 @@ document.getElementById('devlimit-save').addEventListener('click', async functio
   const newLimit = parseInt(document.getElementById('devlimit-select').value);
   this.textContent = '⏳ Saving...';
   this.disabled = true;
-  dept.deviceLimit = newLimit;
-  if (API_URL) {
-    try { await api('PUT', '/departments/' + id, { deviceLimit: newLimit }); } catch(e) {}
+
+  // Get current registered devices
+  const currentIds = parseDeviceIds(dept);
+  let updatedIds = currentIds;
+
+  // If decreasing limit — trim extra devices
+  if (newLimit < currentIds.length) {
+    updatedIds = currentIds.slice(0, newLimit); // keep only first N devices
+    dept.deviceIds = updatedIds;
+    dept.lockedDeviceId = updatedIds.length > 0 ? JSON.stringify(updatedIds) : null;
   }
+
+  dept.deviceLimit = newLimit;
+
+  if (API_URL) {
+    try {
+      await api('PUT', '/departments/' + id, {
+        deviceLimit: newLimit,
+        lockedDeviceId: updatedIds.length > 0 ? JSON.stringify(updatedIds) : null
+      });
+    } catch(e) {}
+  }
+
   localSave();
   renderAdmin();
   document.getElementById('devlimit-modal').style.display = 'none';
   this.textContent = 'Save Limit';
   this.disabled = false;
   const label = newLimit >= 999 ? 'Unlimited' : newLimit;
-  toast('Device limit updated to ' + label + ' ✓');
+  const removed = currentIds.length - updatedIds.length;
+  if (removed > 0) {
+    toast(`Limit set to ${label} — ${removed} device(s) removed ✓`);
+  } else {
+    toast('Device limit updated to ' + label + ' ✓');
+  }
 });
 
 document.getElementById('devlimit-cancel').onclick = () => {
