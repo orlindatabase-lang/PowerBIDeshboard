@@ -63,15 +63,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .fg input:focus,.fg select:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(106,168,79,.14)}
 
 /* DEPT GRID */
-.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.dept-grid{display:flex;flex-direction:column;gap:8px}
 .dept-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);overflow:hidden}
-.dc-head{background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.dc-head{background:var(--g);color:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex:1}
 .dc-badge{font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:50px}
-.dc-actions{display:flex;gap:6px}
+.dc-actions{display:flex;gap:6px;align-items:center}
 .icn-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
 .icn-btn:hover{background:rgba(255,255,255,.2)}
 .icn-btn.red{border-color:rgba(255,150,150,.4)}.icn-btn.red:hover{background:rgba(255,100,100,.2)}
+.dc-toggle-arrow{font-size:12px;color:rgba(255,255,255,.7);transition:transform .2s;margin-left:4px}
+.dept-card.collapsed .dc-toggle-arrow{transform:rotate(-90deg)}
+.dept-card-body{transition:none}
+.dept-card.collapsed .dept-card-body{display:none}
 
 /* TOGGLE */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8}
@@ -124,10 +128,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 /* DEPT PUBLIC VIEW */
 .dv-sub{padding:16px 24px 0;font-size:13px;color:var(--txm)}
 .dash-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;padding:16px 24px 36px}
-.dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:20px 14px 16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:0;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;height:120px}
 .dash-pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gl),var(--g))}
 .dash-pub-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(31,94,26,.12);border-color:var(--gl)}
-.dash-pub-card h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
+.dash-pub-card h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px;padding:0 12px;line-height:1.4}
 .dash-pub-card span{font-size:10px;font-weight:600;color:var(--gl);letter-spacing:.5px}
 
 /* FULLSCREEN IFRAME */
@@ -354,6 +358,23 @@ function localSave() {
 //  HELPERS
 // ══════════════════════════════
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// Parse device IDs from dept — handles string JSON, array, or single ID
+function parseDeviceIds(dept) {
+  // If deviceIds is already a proper array with items, use it
+  if (Array.isArray(dept.deviceIds) && dept.deviceIds.length > 0) {
+    return dept.deviceIds;
+  }
+  // If lockedDeviceId is a JSON array string like '["dev_abc","dev_xyz"]'
+  if (typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.trim().startsWith('[')) {
+    try { return JSON.parse(dept.lockedDeviceId); } catch(e) { return []; }
+  }
+  // If lockedDeviceId is a single device ID string
+  if (dept.lockedDeviceId && typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.length > 0) {
+    return [dept.lockedDeviceId];
+  }
+  return [];
+}
 function slugify(s) { return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,''); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -502,7 +523,7 @@ function renderAdmin() {
     const myDashes = dashes.filter(d => d.deptId === dept.id);
     const link = window.location.href.split('?')[0] + '?dept=' + dept.slug;
     const limit = dept.deviceLimit || 1;
-    const ids = Array.isArray(dept.deviceIds) ? dept.deviceIds : (dept.lockedDeviceId ? [dept.lockedDeviceId] : []);
+    const ids = parseDeviceIds(dept);
     const count = ids.length;
 
     let deviceHtml = '';
@@ -517,13 +538,15 @@ function renderAdmin() {
     const card = document.createElement('div');
     card.className = 'dept-card';
     card.innerHTML = `
-      <div class="dc-head">
+      <div class="dc-head" onclick="toggleCollapse('${dept.id}')">
         <h3>${esc(dept.name)} <span class="dc-badge">${myDashes.length} dashboards</span></h3>
-        <div class="dc-actions">
+        <div class="dc-actions" onclick="event.stopPropagation()">
           <button class="icn-btn" onclick="toggleAddDash('${dept.id}')" title="Add Dashboard">＋</button>
           <button class="icn-btn red" onclick="deleteDept('${dept.id}')" title="Delete">✕</button>
+          <span class="dc-toggle-arrow">▼</span>
         </div>
       </div>
+      <div class="dept-card-body" id="dcb-${dept.id}">
       <div class="toggle-row">
         <div class="toggle-label">
           <span class="sdot ${dept.shareEnabled?'on':''}"></span>
@@ -559,6 +582,7 @@ function renderAdmin() {
           <input type="text" placeholder="Power BI link (https://...)" id="dlink-${dept.id}" style="flex:2" />
           <button class="gbtn sm" onclick="addDash('${dept.id}')">Add</button>
         </div>
+      </div>
       </div>
     `;
     grid.appendChild(card);
@@ -604,6 +628,11 @@ function deleteDept(id) {
 // ══════════════════════════════
 //  TOGGLE SHARE
 // ══════════════════════════════
+function toggleCollapse(id) {
+  const card = document.querySelector(`[onclick="toggleCollapse('${id}')"]`).closest('.dept-card');
+  if (card) card.classList.toggle('collapsed');
+}
+
 function toggleShare(id, enabled) {
   const dept = depts.find(d => d.id === id);
   if (!dept) return;
@@ -696,19 +725,11 @@ function openDeptView(slug, skipDeviceCheck) {
   if (!skipDeviceCheck) {
     const myId = getDeviceId();
     const limit = dept.deviceLimit || 1;
-    // Parse deviceIds — may be stored as JSON string from BigQuery
-    let ids = [];
-    if (Array.isArray(dept.deviceIds) && dept.deviceIds.length > 0) {
-      ids = dept.deviceIds;
-    } else if (typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.startsWith('[')) {
-      try { ids = JSON.parse(dept.lockedDeviceId); } catch(e) { ids = []; }
-    } else if (dept.lockedDeviceId) {
-      ids = [dept.lockedDeviceId];
-    }
+    const ids = parseDeviceIds(dept);
     dept.deviceIds = ids;
 
     if (ids.includes(myId)) {
-      // already registered — ok
+      // already registered — allow
     } else if (ids.length < limit) {
       ids.push(myId);
       dept.lockedDeviceId = JSON.stringify(ids);
@@ -820,14 +841,7 @@ async function init() {
     if (!dept.shareEnabled) { show('restricted-view'); return; }
     const myId = getDeviceId();
     const limit = dept.deviceLimit || 1;
-    let ids = [];
-    if (Array.isArray(dept.deviceIds) && dept.deviceIds.length > 0) {
-      ids = dept.deviceIds;
-    } else if (typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.startsWith('[')) {
-      try { ids = JSON.parse(dept.lockedDeviceId); } catch(e) { ids = []; }
-    } else if (dept.lockedDeviceId) {
-      ids = [dept.lockedDeviceId];
-    }
+    const ids = parseDeviceIds(dept);
     dept.deviceIds = ids;
     if (!ids.includes(myId) && ids.length >= limit) { show('blocked-view'); return; }
     if (!ids.includes(myId)) {
