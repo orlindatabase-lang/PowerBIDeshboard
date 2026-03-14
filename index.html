@@ -1516,49 +1516,43 @@ document.getElementById('btn-refresh').onclick = function() {
 const DEFAULT_PIN = '1234';
 let pinEntry = '';
 let pinLength = 4;
-let cachedPin = null;
 
 async function getPin() {
-  // ALWAYS fetch fresh from BigQuery — never use cache for security
+  // ALWAYS fetch from BigQuery fresh — no cache at all
   if (API_URL) {
     try {
       const r = await api('GET', '/settings/admin_pin');
-      if (r.value) {
-        cachedPin = r.value;
-        localStorage.setItem('pbi_admin_pin', r.value);
-        return r.value;
-      }
-    } catch(e) {
-      console.warn('Could not fetch PIN from cloud, using local cache');
-    }
+      if (r.value) return r.value;
+    } catch(e) {}
   }
-  // Fallback to localStorage only if cloud fails
-  const local = localStorage.getItem('pbi_admin_pin');
-  cachedPin = local || DEFAULT_PIN;
-  return cachedPin;
+  // Only fallback to localStorage if BigQuery unreachable
+  return localStorage.getItem('pbi_admin_pin') || DEFAULT_PIN;
 }
 
 async function savePin(pin) {
-  localStorage.setItem('pbi_admin_pin', pin);
-  // Save to BigQuery so all devices share same PIN
+  // Save to BigQuery first
   if (API_URL) {
     try {
       await api('PUT', '/settings/admin_pin', { value: pin });
-      cachedPin = null; // Reset cache so next login fetches fresh from BigQuery
     } catch(e) {
-      console.warn('Could not save PIN to cloud', e);
-      cachedPin = pin;
+      console.warn('Cloud save failed', e);
     }
-  } else {
-    cachedPin = pin;
   }
+  // Also update localStorage as backup
+  localStorage.setItem('pbi_admin_pin', pin);
 }
 
 async function showPinScreen() {
   pinEntry = '';
+
+  // Show loader while fetching PIN from BigQuery
+  document.getElementById('app-loader').style.display = 'flex';
+  document.getElementById('pin-view').style.display = 'none';
+
+  // Always fetch fresh from BigQuery
   const stored = await getPin();
   pinLength = stored.length;
-  updatePinDots();
+
   document.getElementById('pin-error').textContent = '';
   // Render correct number of dots
   const dotsEl = document.getElementById('pin-dots');
@@ -1569,8 +1563,11 @@ async function showPinScreen() {
     d.id = 'pd' + i;
     dotsEl.appendChild(d);
   }
-  document.getElementById('pin-view').style.display = 'flex';
+
+  // Hide loader, show PIN screen
   document.getElementById('app-loader').style.display = 'none';
+  document.getElementById('pin-view').style.display = 'flex';
+  updatePinDots();
 }
 
 function updatePinDots() {
