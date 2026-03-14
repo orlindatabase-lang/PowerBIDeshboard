@@ -112,6 +112,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .dash-item-url{font-size:11px;color:var(--txm);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;font-family:monospace}
 .dash-del{width:24px;height:24px;border-radius:5px;border:1px solid #f5c6c2;background:none;color:var(--red);cursor:pointer;font-size:12px;flex-shrink:0}
 .dash-del:hover{background:var(--redp)}
+.dash-edit{width:24px;height:24px;border-radius:5px;border:1px solid var(--gb);background:none;color:var(--g);cursor:pointer;font-size:12px;flex-shrink:0;margin-right:4px}
+.dash-edit:hover{background:var(--gp)}
+.dash-item-btns{display:flex;align-items:center;gap:4px;flex-shrink:0}
+/* EDIT MODAL */
+#edit-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);justify-content:center;align-items:center;z-index:9998}
+#edit-modal.open{display:flex}
+.edit-box{background:#fff;border-radius:14px;padding:26px;width:420px;max-width:94vw;animation:pop .2s ease}
+.edit-box h3{font-size:15px;font-weight:600;color:var(--g);margin-bottom:16px}
+.edit-box .efg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.edit-box .efg label{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px}
+.edit-box .efg input{padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);transition:.18s}
+.edit-box .efg input:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(106,168,79,.14)}
+.edit-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
 .no-dash{font-size:12px;color:var(--txm);text-align:center;padding:12px 0;font-style:italic}
 
 /* ADD DASH INLINE */
@@ -300,6 +313,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
   <div class="static-view"><div class="sv-icon">🚫</div><h2 style="color:var(--red)">Device Not Authorised</h2><p>This link is already registered to another device.<br>Contact your administrator to reset access.</p></div>
 </div>
 
+<!-- EDIT MODAL -->
+<div id="edit-modal">
+  <div class="edit-box">
+    <h3>✎ Edit Dashboard</h3>
+    <div class="efg">
+      <label>Dashboard Name</label>
+      <input type="text" id="edit-name" placeholder="Dashboard name" />
+    </div>
+    <div class="efg">
+      <label>Power BI Link</label>
+      <input type="text" id="edit-link" placeholder="https://app.powerbi.com/..." />
+    </div>
+    <div class="edit-footer">
+      <button class="cancel-btn" id="edit-cancel">Cancel</button>
+      <button class="gbtn" id="edit-save">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -411,6 +443,16 @@ function confirm2(title, body, cb) {
   confirmCb = cb;
   document.getElementById('confirm-overlay').classList.add('open');
 }
+// Edit modal close
+document.getElementById('edit-cancel').onclick = () => {
+  document.getElementById('edit-modal').classList.remove('open');
+};
+document.getElementById('edit-modal').onclick = e => {
+  if (e.target === document.getElementById('edit-modal')) {
+    document.getElementById('edit-modal').classList.remove('open');
+  }
+};
+
 document.getElementById('btn-cancel-confirm').onclick = () => {
   document.getElementById('confirm-overlay').classList.remove('open');
   confirmCb = null;
@@ -573,11 +615,14 @@ function renderAdmin() {
           ? '<div class="no-dash">No dashboards assigned yet</div>'
           : myDashes.map(d => `
             <div class="dash-item">
-              <div style="overflow:hidden">
+              <div style="overflow:hidden;flex:1">
                 <div class="dash-item-name">${esc(d.name)}</div>
                 <div class="dash-item-url">${esc(d.link)}</div>
               </div>
-              <button class="dash-del" onclick="deleteDash('${d.id}')" title="Remove">✕</button>
+              <div class="dash-item-btns">
+                <button class="dash-edit" onclick="editDash('${d.id}')" title="Edit">✎</button>
+                <button class="dash-del" onclick="deleteDash('${d.id}')" title="Remove">✕</button>
+              </div>
             </div>`).join('')
         }
       </div>
@@ -726,6 +771,38 @@ function addDash(deptId) {
 // ══════════════════════════════
 //  DELETE DASH
 // ══════════════════════════════
+function editDash(id) {
+  const dash = dashes.find(d => d.id === id);
+  if (!dash) return;
+  document.getElementById('edit-name').value = dash.name;
+  document.getElementById('edit-link').value = dash.link;
+  document.getElementById('edit-modal').classList.add('open');
+  document.getElementById('edit-name').focus();
+
+  document.getElementById('edit-save').onclick = async function() {
+    const newName = document.getElementById('edit-name').value.trim();
+    const newLink = document.getElementById('edit-link').value.trim();
+    if (!newName || !newLink) { toast('Fill both fields', true); return; }
+    dash.name = newName;
+    dash.link = newLink;
+    // Update in BigQuery
+    if (API_URL) {
+      try {
+        await api('DELETE', '/dashboards/' + id);
+        await api('POST', '/dashboards', { id: dash.id, name: dash.name, deptId: dash.deptId, link: dash.link });
+        toast('Dashboard updated ✓');
+      } catch(e) {
+        toast('Saved locally only', true);
+      }
+    } else {
+      toast('Dashboard updated ✓');
+    }
+    localSave();
+    renderAdmin();
+    document.getElementById('edit-modal').classList.remove('open');
+  };
+}
+
 function deleteDash(id) {
   const dash = dashes.find(d => d.id === id);
   if (!dash) return;
