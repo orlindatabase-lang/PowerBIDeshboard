@@ -666,7 +666,7 @@ function openDeptView(s, skipDeviceCheck) {
     myDashes.forEach(d => {
       const card = document.createElement('div');
       card.className = 'dash-card';
-      card.onclick = () => window.open(d.link, '_blank');
+      card.onclick = () => openIframe(d.name, d.link, d.id);
       card.innerHTML = `<h3>${esc(d.name)}</h3><span>VIEW DASHBOARD →</span>`;
       grid.appendChild(card);
     });
@@ -685,8 +685,30 @@ function openInNewTab() {
   if (src) window.open(src, '_blank');
 }
 
+function getEmbedUrl(link) {
+  try {
+    // For Power BI public/published links — add chromeless param to remove header
+    let url = new URL(link);
+    // Already an embed link
+    if (link.includes('/view?') || link.includes('embedUrl') || link.includes('chromeless')) {
+      return link;
+    }
+    // Convert report link to embed
+    if (link.includes('app.powerbi.com/reportEmbed')) {
+      return link;
+    }
+    if (link.includes('app.powerbi.com')) {
+      // Add chromeless=1 to remove Power BI chrome and allow iframe
+      url.searchParams.set('chromeless', '1');
+      return url.toString();
+    }
+    return link;
+  } catch(e) { return link; }
+}
+
 function openIframe(name, link, dashId) {
   currentDashId = dashId || '';
+  const embedUrl = getEmbedUrl(link);
   // Save link in sessionStorage so refresh can reload it
   sessionStorage.setItem('pbi_active_link', link);
   sessionStorage.setItem('pbi_active_name', name);
@@ -699,9 +721,9 @@ function openIframe(name, link, dashId) {
   if (dashId) url.searchParams.set('dash', dashId);
   window.history.replaceState({}, '', url.toString());
   show('iframe-view');
-  // Set iframe src AFTER showing view to avoid redirect issues
+  // Set iframe src AFTER showing view
   setTimeout(() => {
-    document.getElementById('dashFrame').src = link;
+    document.getElementById('dashFrame').src = embedUrl;
   }, 50);
 }
 
