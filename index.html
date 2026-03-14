@@ -342,6 +342,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
   <div class="static-view"><div class="sv-icon">🚫</div><h2 style="color:var(--red)">Device Not Authorised</h2><p>This link is already registered to another device.<br>Contact your administrator to reset access.</p></div>
 </div>
 
+<!-- EDIT DEVICE LIMIT MODAL -->
+<div id="devlimit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);justify-content:center;align-items:center;z-index:9998">
+  <div style="background:#fff;border-radius:14px;padding:26px;width:360px;max-width:94vw;animation:pop .2s ease">
+    <h3 style="font-size:15px;font-weight:600;color:var(--g);margin-bottom:6px">📱 Edit Device Limit</h3>
+    <p style="font-size:12px;color:var(--txm);margin-bottom:18px" id="devlimit-desc">Change how many devices can access this department link.</p>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px">
+      <label style="font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px">Device Limit</label>
+      <select id="devlimit-select" style="padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx)">
+        <option value="1">1 Device</option>
+        <option value="2">2 Devices</option>
+        <option value="3">3 Devices</option>
+        <option value="5">5 Devices</option>
+        <option value="10">10 Devices</option>
+        <option value="20">20 Devices</option>
+        <option value="50">50 Devices</option>
+        <option value="999">Unlimited</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="cancel-btn" id="devlimit-cancel">Cancel</button>
+      <button class="gbtn" id="devlimit-save">Save Limit</button>
+    </div>
+  </div>
+</div>
+
 <!-- RENAME MODAL -->
 <div id="rename-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);justify-content:center;align-items:center;z-index:9998">
   <div style="background:#fff;border-radius:14px;padding:26px;width:380px;max-width:94vw;animation:pop .2s ease">
@@ -675,6 +700,12 @@ async function syncFromCloud() {
 // ══════════════════════════════
 function renderAdmin() {
   updateBadge();
+  // Remember which cards are currently OPEN (not collapsed)
+  const openCards = new Set();
+  document.querySelectorAll('.dept-card:not(.collapsed)').forEach(card => {
+    const head = card.querySelector('.dc-head');
+    if (head && head.id) openCards.add(head.id.replace('dch-', ''));
+  });
   // Keep search query if active
   const searchVal = document.getElementById('dept-search') ? document.getElementById('dept-search').value : '';
   const grid = document.getElementById('dept-grid');
@@ -700,7 +731,7 @@ function renderAdmin() {
     }
 
     const card = document.createElement('div');
-    card.className = 'dept-card collapsed';
+    card.className = 'dept-card' + (openCards.has(dept.id) ? '' : ' collapsed');
     card.innerHTML = `
       <div class="dc-head" id="dch-${dept.id}">
         <div class="dc-head-left" onclick="toggleCollapse('${dept.id}')">
@@ -756,6 +787,9 @@ function renderAdmin() {
       </div>
       </div>
     `;
+    // Fix arrow direction based on open state
+    const arrow = card.querySelector('.dc-toggle-arrow');
+    if (arrow) arrow.textContent = openCards.has(dept.id) ? '▼' : '▶';
     grid.appendChild(card);
   });
   // Re-apply search filter if active
@@ -784,6 +818,46 @@ function addDept() {
 // ══════════════════════════════
 //  DELETE DEPT
 // ══════════════════════════════
+function editDeviceLimit(id) {
+  const dept = depts.find(d => d.id === id);
+  if (!dept) return;
+  const ids = parseDeviceIds(dept);
+  const current = dept.deviceLimit || 1;
+  document.getElementById('devlimit-desc').textContent =
+    dept.name + ' — currently ' + ids.length + ' device(s) registered.';
+  const sel = document.getElementById('devlimit-select');
+  // Set closest option
+  const opts = [1,2,3,5,10,20,50,999];
+  sel.value = opts.includes(current) ? String(current) : '999';
+  document.getElementById('devlimit-save').setAttribute('data-id', id);
+  document.getElementById('devlimit-modal').style.display = 'flex';
+}
+
+document.getElementById('devlimit-save').addEventListener('click', async function() {
+  const id = this.getAttribute('data-id');
+  if (!id) return;
+  const dept = depts.find(d => d.id === id);
+  if (!dept) return;
+  const newLimit = parseInt(document.getElementById('devlimit-select').value);
+  this.textContent = '⏳ Saving...';
+  this.disabled = true;
+  dept.deviceLimit = newLimit;
+  if (API_URL) {
+    try { await api('PUT', '/departments/' + id, { deviceLimit: newLimit }); } catch(e) {}
+  }
+  localSave();
+  renderAdmin();
+  document.getElementById('devlimit-modal').style.display = 'none';
+  this.textContent = 'Save Limit';
+  this.disabled = false;
+  const label = newLimit >= 999 ? 'Unlimited' : newLimit;
+  toast('Device limit updated to ' + label + ' ✓');
+});
+
+document.getElementById('devlimit-cancel').onclick = () => {
+  document.getElementById('devlimit-modal').style.display = 'none';
+};
+
 function renameDept(id) {
   const dept = depts.find(d => d.id === id);
   if (!dept) return;
