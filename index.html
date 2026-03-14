@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Power BI Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,57 +18,73 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .view{display:none}.view.active{display:block}
 
 /* HEADER */
-.hdr{background:var(--g);color:#fff;height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,0.07)}
+.hdr{background:var(--g);color:#fff;height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .hdr-left{display:flex;align-items:center;gap:0;white-space:nowrap}
-.hdr-pbi{display:flex;align-items:center;gap:8px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.15)}
-.hdr-pbi-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center}
-.hdr-pbi-icon svg{width:22px;height:22px}
-.hdr-pbi-label{font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:0.2px}
+.hdr-pbi{display:flex;align-items:center;gap:8px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.2)}
+.hdr-pbi svg{width:22px;height:22px}
+.hdr-pbi-label{font-size:13px;font-weight:600;color:rgba(255,255,255,.9)}
 .hdr-dept{padding-left:16px;display:flex;align-items:center;gap:8px}
-.hdr-dept-name{font-size:14px;font-weight:600;color:#fff;letter-spacing:0.1px}
-.hdr-dept-pill{font-size:10px;font-weight:600;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);padding:2px 8px;border-radius:50px;letter-spacing:0.3px;text-transform:uppercase}
+.hdr-dept-name{font-size:14px;font-weight:600;color:#fff}
+.hdr-dept-pill{font-size:10px;font-weight:600;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:2px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.3px}
 
-/* PILL BTN */
-.pbtn{display:inline-flex;align-items:center;gap:7px;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.45);border-radius:50px;padding:6px 15px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;outline:none}
-.pbtn:hover{background:rgba(255,255,255,0.15);border-color:#fff}
-.pbtn .ic{width:20px;height:20px;border-radius:50%;background:#fff;color:var(--g);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1;transition:transform .2s}
-.pbtn:hover .ic{transform:rotate(90deg)}
-.pbtn.plain .ic{transform:none!important}
-
-/* GREEN BTN */
+/* BUTTONS */
 .gbtn{background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.18s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .gbtn:hover{background:var(--gm)}
 .gbtn.sm{padding:6px 13px;font-size:12px}
-.gbtn.danger{background:var(--red)}
-.gbtn.danger:hover{background:#a93226}
+.gbtn.gray{background:#555}.gbtn.gray:hover{background:#444}
+.gbtn.teal{background:var(--gm)}.gbtn.teal:hover{background:var(--g)}
+.gbtn.danger{background:var(--red)}.gbtn.danger:hover{background:#a93226}
+.pbtn{display:inline-flex;align-items:center;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);border-radius:50px;padding:6px 15px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;outline:none}
+.pbtn:hover{background:rgba(255,255,255,.15);border-color:#fff}
 
-/* ══ ADMIN VIEW ══ */
-#admin-view .top{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
-#admin-view .top h1{font-size:20px;font-weight:600;color:var(--g)}
-#admin-view .top p{font-size:12px;color:var(--txm);margin-top:3px}
-
+/* ADMIN */
+.admin-top{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.admin-top h1{font-size:20px;font-weight:600;color:var(--g)}
+.admin-top p{font-size:12px;color:var(--txm);margin-top:3px}
+.admin-btns{display:flex;gap:8px;flex-wrap:wrap}
 .section{padding:20px 24px}
-.section-title{font-size:13px;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title{font-size:13px;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
 
-/* ADD FORM */
+/* SETUP PANEL */
+.setup-panel{display:none;margin:12px 24px;background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:18px}
+.setup-panel h4{font-size:13px;font-weight:600;color:var(--g);margin-bottom:4px}
+.setup-panel p{font-size:11px;color:var(--txm);margin-bottom:14px}
+.setup-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.setup-status{margin-top:10px;font-size:12px;color:var(--txm)}
+.api-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:50px;background:#f0f4ee;color:var(--txm);float:right}
+.api-badge.on{background:#e8f5e9;color:#27ae60}
+
+/* FORM */
 .add-form{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:18px;margin-bottom:20px}
-.add-form .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px}
 .fg label{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px}
 .fg input,.fg select{padding:9px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);background:#fff;transition:.18s}
 .fg input:focus,.fg select:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(106,168,79,.14)}
 
-/* DEPT CARDS GRID */
-.dept-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.dept-admin-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);overflow:hidden}
-.dac-head{background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.dac-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
-.dac-head .badge{font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:50px}
-.dac-actions{display:flex;gap:6px}
-.icon-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
-.icon-btn:hover{background:rgba(255,255,255,.2)}
-.icon-btn.red{border-color:rgba(255,150,150,.4)}
-.icon-btn.red:hover{background:rgba(255,100,100,.2)}
+/* DEPT GRID */
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.dept-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);overflow:hidden}
+.dc-head{background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.dc-badge{font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:50px}
+.dc-actions{display:flex;gap:6px}
+.icn-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
+.icn-btn:hover{background:rgba(255,255,255,.2)}
+.icn-btn.red{border-color:rgba(255,150,150,.4)}.icn-btn.red:hover{background:rgba(255,100,100,.2)}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8}
+.toggle-label{font-size:11px;font-weight:600;color:var(--txm);display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.4px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#ccc}
+.sdot.on{background:#27ae60}
+.stxt.on{color:#27ae60}
+.toggle-sw{position:relative;width:40px;height:22px;cursor:pointer}
+.toggle-sw input{opacity:0;width:0;height:0;position:absolute}
+.t-track{position:absolute;inset:0;background:#ccc;border-radius:50px;transition:.25s}
+.t-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-sw input:checked + .t-track{background:var(--gl)}
+.toggle-sw input:checked ~ .t-thumb{left:21px}
 
 /* LINK ROW */
 .link-row{padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8;display:flex;align-items:center;gap:8px}
@@ -76,48 +92,65 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .copy-btn{background:none;border:1.5px solid var(--gb);color:var(--txm);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.15s}
 .copy-btn:hover{background:var(--gp);color:var(--g)}
 
+/* DEVICE ROW */
+.device-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fffbf0;border-bottom:1px solid #ffeaa0;font-size:11px}
+.device-info{display:flex;align-items:center;gap:6px;color:#856404;font-weight:600}
+.reset-btn{background:none;border:1.5px solid #ffc107;color:#856404;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.reset-btn:hover{background:#fff3cd}
+.device-free{color:var(--txm);font-style:italic;font-size:11px;padding:6px 16px;border-bottom:1px solid #edf5e8;background:#fafffe}
+
 /* DASH LIST */
 .dash-list{padding:10px 16px 14px}
 .dash-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:7px;border:1px solid #edf5e8;margin-bottom:6px;background:#fafffe}
 .dash-item:last-child{margin-bottom:0}
 .dash-item-name{font-size:13px;font-weight:500;color:var(--tx)}
-.dash-item-link{font-size:11px;color:var(--txm);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;font-family:monospace}
-.dash-item-del{width:24px;height:24px;border-radius:5px;border:1px solid #f5c6c2;background:none;color:var(--red);cursor:pointer;font-size:12px;flex-shrink:0;transition:.15s}
-.dash-item-del:hover{background:var(--redp)}
+.dash-item-url{font-size:11px;color:var(--txm);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;font-family:monospace}
+.dash-del{width:24px;height:24px;border-radius:5px;border:1px solid #f5c6c2;background:none;color:var(--red);cursor:pointer;font-size:12px;flex-shrink:0}
+.dash-del:hover{background:var(--redp)}
 .no-dash{font-size:12px;color:var(--txm);text-align:center;padding:12px 0;font-style:italic}
 
 /* ADD DASH INLINE */
 .add-dash-form{padding:0 16px 14px;display:none}
 .add-dash-form.open{display:block}
-.add-dash-form .row{display:flex;gap:8px;flex-wrap:wrap}
+.add-dash-form .arow{display:flex;gap:8px;flex-wrap:wrap}
 .add-dash-form input{flex:1;min-width:140px;padding:8px 10px;border:1.5px solid var(--gb);border-radius:7px;font-size:12px;outline:none;font-family:inherit;color:var(--tx)}
 .add-dash-form input:focus{border-color:var(--gl)}
 
 /* EMPTY */
-.empty{text-align:center;padding:48px 20px;color:var(--txm)}
+.empty{text-align:center;padding:48px 20px;color:var(--txm);grid-column:1/-1}
 .empty .ei{font-size:36px;opacity:.35;margin-bottom:10px}
 .empty p{font-size:13px}
 
-/* ══ DEPT (PUBLIC) VIEW ══ */
-#dept-view .dv-header{padding:28px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
-#dept-view .dv-header h1{font-size:22px;font-weight:600;color:var(--g)}
-#dept-view .dv-header p{font-size:13px;color:var(--txm);margin-top:4px}
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;padding:20px 24px 36px}
-.dash-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:20px 14px 16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
-.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gl),var(--g))}
-.dash-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(31,94,26,.12);border-color:var(--gl)}
-.dash-card h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
-.dash-card span{font-size:10px;font-weight:600;color:var(--gl);letter-spacing:.5px}
+/* DEPT PUBLIC VIEW */
+.dv-sub{padding:16px 24px 0;font-size:13px;color:var(--txm)}
+.dash-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;padding:16px 24px 36px}
+.dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:20px 14px 16px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.dash-pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gl),var(--g))}
+.dash-pub-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(31,94,26,.12);border-color:var(--gl)}
+.dash-pub-card h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
+.dash-pub-card span{font-size:10px;font-weight:600;color:var(--gl);letter-spacing:.5px}
 
-/* ══ IFRAME VIEW ══ */
+/* FULLSCREEN IFRAME */
+#iframe-view{position:fixed;inset:0;z-index:200;background:#fff}
+#iframe-view .if-bar{position:absolute;top:0;left:0;right:0;height:50px;background:var(--g);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:201}
+#iframe-view .if-bar button{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+#iframe-view .if-bar button:hover{background:rgba(255,255,255,.25)}
+#iframe-view .if-bar .if-title{color:#fff;font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#iframe-view .if-bar .if-refresh{width:36px;height:36px;border-radius:50%!important;padding:0!important;display:flex;align-items:center;justify-content:center;font-size:18px}
+#dashFrame{position:absolute;top:50px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 50px);border:none}
 
+/* STATIC VIEWS */
+.static-view{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px}
+.static-view .sv-icon{font-size:64px;margin-bottom:20px;opacity:.3}
+.static-view h2{font-size:20px;font-weight:600;margin-bottom:10px}
+.static-view p{font-size:14px;color:var(--txm);max-width:340px;line-height:1.7}
 
 /* TOAST */
 #toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--g);color:#fff;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;transform:translateY(60px);opacity:0;transition:.28s;pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.err{background:var(--red)}
 
-/* CONFIRM DIALOG */
+/* CONFIRM */
 #confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);justify-content:center;align-items:center;z-index:9998}
 #confirm-overlay.open{display:flex}
 .confirm-box{background:#fff;border-radius:14px;padding:26px;width:360px;max-width:92vw;animation:pop .2s ease}
@@ -128,52 +161,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .cancel-btn{background:none;border:1.5px solid var(--gb);color:var(--txm);padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
 .cancel-btn:hover{background:var(--gp)}
 
-@media(max-width:600px){
-  .hdr,.section,#admin-view .top,#dept-view .dv-header,.dash-grid{padding-left:14px;padding-right:14px}
-  .dept-admin-grid{grid-template-columns:1fr}
-}
-
-/* SHARE TOGGLE */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8}
-.toggle-label{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:6px}
-.toggle-label .status-dot{width:7px;height:7px;border-radius:50%;background:#ccc;transition:.2s}
-.toggle-label .status-dot.on{background:#27ae60}
-.toggle-label .status-txt{font-size:11px;font-weight:600;color:var(--txm)}
-.toggle-label .status-txt.on{color:#27ae60}
-.toggle-switch{position:relative;width:40px;height:22px;cursor:pointer}
-.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
-.toggle-track{position:absolute;inset:0;background:#ccc;border-radius:50px;transition:.25s}
-.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.toggle-switch input:checked + .toggle-track{background:var(--gl)}
-.toggle-switch input:checked ~ .toggle-thumb{left:21px}
-.restricted-banner{background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;color:#856404;display:flex;align-items:center;gap:6px}
-
-/* DEVICE LOCK */
-.device-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fffbf0;border-bottom:1px solid #ffeaa0;font-size:11px}
-.device-info{display:flex;align-items:center;gap:6px;color:#856404;font-weight:600}
-.device-info .di{font-size:13px}
-.reset-btn{background:none;border:1.5px solid #ffc107;color:#856404;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
-.reset-btn:hover{background:#fff3cd}
-.device-free{color:var(--txm);font-style:italic;font-size:11px;padding:6px 16px;border-bottom:1px solid #edf5e8;background:#fafffe}
-
+/* LOADER */
+#app-loader{position:fixed;inset:0;background:var(--gp);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spinner{font-size:36px;animation:spin .8s linear infinite;margin-bottom:16px}
+
+@media(max-width:600px){
+  .admin-top,.setup-panel,.section,.dv-sub,.dash-pub-grid{padding-left:14px;padding-right:14px}
+  .dept-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
+<!-- LOADER -->
+<div id="app-loader">
+  <div class="spinner">↻</div>
+  <div style="font-size:13px;color:var(--txm);font-weight:500">Loading portal...</div>
+</div>
+
 <!-- ══ ADMIN VIEW ══ -->
-<div id="admin-view" class="view active">
+<div id="admin-view" class="view">
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-pbi">
-        <div class="hdr-pbi-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/>
-            <rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity="0.85"/>
-            <rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity="0.65"/>
-            <rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity="0.45"/>
-          </svg>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/><rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity=".85"/><rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity=".65"/><rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity=".45"/></svg>
         <span class="hdr-pbi-label">Power BI</span>
       </div>
       <div class="hdr-dept">
@@ -183,51 +195,47 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
     </div>
   </div>
 
-  <div class="top">
+  <div class="admin-top">
     <div>
       <h1>Dashboard Portal Manager</h1>
-      <p>Create departments, assign dashboards, and share department links</p>
+      <p>Create departments, assign dashboards and share links</p>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="gbtn" onclick="copyAdminLink()" style="display:flex;align-items:center;gap:7px;white-space:nowrap">📋 Copy Admin Link</button>
-      <button class="gbtn" id="sync-btn" onclick="syncFromCloud()" style="display:flex;align-items:center;gap:7px;white-space:nowrap;background:var(--gm)">↻ Sync</button>
-      <button class="gbtn" onclick="toggleSetup()" style="display:flex;align-items:center;gap:7px;white-space:nowrap;background:#555">⚙ Cloud Setup</button>
+    <div class="admin-btns">
+      <button class="gbtn" onclick="copyAdminLink()">📋 Copy Admin Link</button>
+      <button class="gbtn teal" onclick="syncFromCloud()">↻ Sync</button>
+      <button class="gbtn gray" onclick="toggleSetup()">⚙ Cloud Setup</button>
     </div>
   </div>
 
-  <!-- CLOUD SETUP PANEL -->
-  <div id="setup-panel" style="display:none;margin:0 24px;background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:18px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--g)">☁ GCP Cloud Run API Setup</div>
-        <div style="font-size:11px;color:var(--txm);margin-top:3px">Paste your Cloud Run API URL — all devices will share the same BigQuery data</div>
-      </div>
-      <div id="api-status-badge" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:50px;background:#f0f4ee;color:var(--txm)">⚪ Not connected</div>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div class="fg" style="flex:1;min-width:260px">
+  <!-- SETUP PANEL -->
+  <div class="setup-panel" id="setup-panel">
+    <span id="api-badge" class="api-badge">⚪ Not connected</span>
+    <h4>☁ GCP Cloud Run API Setup</h4>
+    <p>Paste your Cloud Run URL — all devices share the same BigQuery data</p>
+    <div class="setup-row">
+      <div class="fg" style="flex:2;min-width:240px">
         <label>Cloud Run API URL</label>
-        <input type="text" id="setup-apiurl" placeholder="https://powerbi-portal-api-xxxx-uc.a.run.app" />
+        <input type="text" id="setup-url" placeholder="https://powerbi-portal-api-xxxx-uc.a.run.app" />
       </div>
       <button class="gbtn" onclick="saveCloudSetup()">Connect</button>
-      <button class="gbtn" onclick="testApiConnection()" style="background:var(--gm)">Test</button>
+      <button class="gbtn teal" onclick="testConnection()">Test</button>
     </div>
-    <div id="setup-status" style="margin-top:10px;font-size:12px;color:var(--txm)"></div>
+    <div class="setup-status" id="setup-status"></div>
   </div>
 
   <!-- ADD DEPARTMENT -->
   <div class="section">
     <div class="section-title">➕ New Department</div>
     <div class="add-form">
-      <div class="row">
+      <div class="form-row">
         <div class="fg">
           <label>Department Name</label>
-          <input type="text" id="new-dept-name" placeholder="e.g. Finance, HR, Sales…" />
+          <input type="text" id="new-dept-name" placeholder="e.g. Finance, HR, Sales…" onkeydown="if(event.key==='Enter')addDept()" />
         </div>
-        <div class="fg" style="max-width:180px">
+        <div class="fg" style="max-width:190px">
           <label>Device Limit</label>
-          <select id="new-dept-devices">
-            <option value="1">1 Device (default)</option>
+          <select id="new-dept-limit">
+            <option value="1">1 Device</option>
             <option value="2">2 Devices</option>
             <option value="3">3 Devices</option>
             <option value="5">5 Devices</option>
@@ -235,28 +243,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
             <option value="999">Unlimited</option>
           </select>
         </div>
-        <button class="gbtn" onclick="addDept()" style="margin-bottom:1px">Create Department</button>
+        <button class="gbtn" onclick="addDept()">Create Department</button>
       </div>
     </div>
-
-    <!-- DEPARTMENTS LIST -->
-    <div class="dept-admin-grid" id="dept-admin-grid"></div>
+    <div class="dept-grid" id="dept-grid"></div>
   </div>
 </div>
 
-<!-- ══ DEPT PUBLIC VIEW ══ -->
+<!-- ══ DEPT VIEW ══ -->
 <div id="dept-view" class="view">
   <div class="hdr">
     <div class="hdr-left">
       <div class="hdr-pbi">
-        <div class="hdr-pbi-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/>
-            <rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity="0.85"/>
-            <rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity="0.65"/>
-            <rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity="0.45"/>
-          </svg>
-        </div>
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/><rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity=".85"/><rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity=".65"/><rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity=".45"/></svg>
         <span class="hdr-pbi-label">Power BI</span>
       </div>
       <div class="hdr-dept">
@@ -264,272 +263,301 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
       </div>
     </div>
   </div>
-  <div class="dv-header">
-    <p id="dv-sub" style="padding:18px 24px 0;font-size:13px;color:var(--txm)">Select a dashboard to open</p>
-  </div>
-  <div class="dash-grid" id="dept-dash-grid"></div>
+  <div class="dv-sub" id="dv-sub"></div>
+  <div class="dash-pub-grid" id="dept-dash-grid"></div>
 </div>
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
-  <!-- Floating buttons - appear on hover -->
-  <div id="iframe-controls" style="position:fixed;top:12px;left:12px;z-index:9999;display:flex;gap:8px;opacity:0;transition:opacity .3s"
-    onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
-    <button id="iframe-back" style="background:var(--g);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(0,0,0,0.3)">← Back</button>
-    <button onclick="refreshDashboard()" style="background:var(--g);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.3)" title="Refresh">
-      <span id="spin-icon">↻</span>
-    </button>
+  <div class="if-bar">
+    <button id="btn-back">← Back</button>
+    <span class="if-title" id="if-title"></span>
+    <button class="if-refresh" id="btn-refresh" title="Refresh">↻</button>
   </div>
-  <!-- Show controls hint on load -->
-  <div id="iframe-hint" style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(0,0,0,0.6);color:#fff;padding:6px 16px;border-radius:50px;font-size:12px;font-family:'DM Sans',sans-serif;pointer-events:none;transition:opacity .5s">
-    Move mouse to top-left for controls
-  </div>
-  <iframe id="dashFrame" style="width:100vw;height:100vh;border:none;display:block"></iframe>
+  <iframe id="dashFrame"></iframe>
 </div>
 
-<!-- ══ NOT FOUND VIEW ══ -->
+<!-- ══ NOT FOUND ══ -->
 <div id="notfound-view" class="view">
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-pbi">
-        <div class="hdr-pbi-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/>
-            <rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity="0.85"/>
-            <rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity="0.65"/>
-            <rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity="0.45"/>
-          </svg>
-        </div>
-        <span class="hdr-pbi-label">Power BI</span>
-      </div>
-      <div class="hdr-dept">
-        <span class="hdr-dept-name">Portal</span>
-      </div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px">
-    <div style="font-size:64px;margin-bottom:20px;opacity:0.25">🔗</div>
-    <h2 style="font-size:20px;font-weight:600;color:var(--g);margin-bottom:10px">Link Not Available</h2>
-    <p style="font-size:14px;color:var(--txm);max-width:320px;line-height:1.7">This department link has been removed or does not exist.<br>Please contact your administrator for a new link.</p>
-  </div>
+  <div class="hdr"><div class="hdr-left"><div class="hdr-pbi"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/><rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity=".85"/><rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity=".65"/><rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity=".45"/></svg><span class="hdr-pbi-label">Power BI</span></div><div class="hdr-dept"><span class="hdr-dept-name">Portal</span></div></div></div>
+  <div class="static-view"><div class="sv-icon">🔗</div><h2 style="color:var(--g)">Link Not Available</h2><p>This department link has been removed.<br>Contact your administrator for a new link.</p></div>
 </div>
 
-<!-- ══ BLOCKED VIEW ══ -->
-<div id="blocked-view" class="view">
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-pbi">
-        <div class="hdr-pbi-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/>
-            <rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity="0.85"/>
-            <rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity="0.65"/>
-            <rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity="0.45"/>
-          </svg>
-        </div>
-        <span class="hdr-pbi-label">Power BI</span>
-      </div>
-      <div class="hdr-dept">
-        <span class="hdr-dept-name">Portal</span>
-      </div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px">
-    <div style="font-size:64px;margin-bottom:20px;opacity:0.3">🚫</div>
-    <h2 style="font-size:20px;font-weight:600;color:#c0392b;margin-bottom:10px">Device Not Authorised</h2>
-    <p style="font-size:14px;color:var(--txm);max-width:360px;line-height:1.8">This link is already registered to another device.<br>Only the original device can access this dashboard.<br><br>Contact your administrator to reset access.</p>
-  </div>
-</div>
-
-<!-- ══ RESTRICTED VIEW ══ -->
+<!-- ══ RESTRICTED ══ -->
 <div id="restricted-view" class="view">
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-pbi">
-        <div class="hdr-pbi-icon">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/>
-            <rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity="0.85"/>
-            <rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity="0.65"/>
-            <rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity="0.45"/>
-          </svg>
-        </div>
-        <span class="hdr-pbi-label">Power BI</span>
-      </div>
-      <div class="hdr-dept">
-        <span class="hdr-dept-name">Portal</span>
-      </div>
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px">
-    <div style="font-size:64px;margin-bottom:20px;opacity:0.3">🔒</div>
-    <h2 style="font-size:20px;font-weight:600;color:var(--g);margin-bottom:10px">Access Restricted</h2>
-    <p style="font-size:14px;color:var(--txm);max-width:340px;line-height:1.7">This dashboard link has been restricted by the administrator.<br>Please contact your admin to request access.</p>
-  </div>
+  <div class="hdr"><div class="hdr-left"><div class="hdr-pbi"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/><rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity=".85"/><rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity=".65"/><rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity=".45"/></svg><span class="hdr-pbi-label">Power BI</span></div><div class="hdr-dept"><span class="hdr-dept-name">Portal</span></div></div></div>
+  <div class="static-view"><div class="sv-icon">🔒</div><h2 style="color:var(--g)">Access Restricted</h2><p>This link has been restricted by the administrator.<br>Contact your admin to request access.</p></div>
+</div>
+
+<!-- ══ BLOCKED ══ -->
+<div id="blocked-view" class="view">
+  <div class="hdr"><div class="hdr-left"><div class="hdr-pbi"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="12" width="4" height="10" rx="1" fill="#f2c811"/><rect x="8" y="7" width="4" height="15" rx="1" fill="#f2c811" opacity=".85"/><rect x="14" y="3" width="4" height="19" rx="1" fill="#f2c811" opacity=".65"/><rect x="20" y="9" width="2" height="13" rx="1" fill="#f2c811" opacity=".45"/></svg><span class="hdr-pbi-label">Power BI</span></div><div class="hdr-dept"><span class="hdr-dept-name">Portal</span></div></div></div>
+  <div class="static-view"><div class="sv-icon">🚫</div><h2 style="color:var(--red)">Device Not Authorised</h2><p>This link is already registered to another device.<br>Contact your administrator to reset access.</p></div>
 </div>
 
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- CONFIRM DIALOG -->
+<!-- CONFIRM -->
 <div id="confirm-overlay">
   <div class="confirm-box">
     <h3 id="confirm-title">Confirm</h3>
     <p id="confirm-body"></p>
     <div class="confirm-footer">
-      <button class="cancel-btn" onclick="closeConfirm()">Cancel</button>
-      <button class="gbtn danger" id="confirm-ok">Delete</button>
+      <button class="cancel-btn" id="btn-cancel-confirm">Cancel</button>
+      <button class="gbtn danger" id="btn-ok-confirm">Delete</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════
-//  DATA
-// ═══════════════════════════
-let depts = [];   // {id, name, icon, slug, shareEnabled, lockedDeviceId, deviceLimit, deviceIds}
-let dashes = [];  // {id, name, deptId, link}
-
-// ═══════════════════════════
-//  GCP BIGQUERY API
-// ═══════════════════════════
-// Set this to your Cloud Run API URL after deploying
+// ══════════════════════════════
+//  STATE
+// ══════════════════════════════
+let depts = [];
+let dashes = [];
 let API_URL = localStorage.getItem('pbi_api_url') || 'https://powerbi-portal-api-174773483931.us-central1.run.app';
+let currentDeptSlug = '';
+let currentDashId = '';
 
-async function apiGet(path) {
-  const res = await fetch(API_URL + path);
-  if (!res.ok) throw new Error('API error ' + res.status);
-  return res.json();
-}
-async function apiPost(path, body) {
-  const res = await fetch(API_URL + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error('API error ' + res.status);
-  return res.json();
-}
-async function apiPut(path, body) {
-  const res = await fetch(API_URL + path, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error('API error ' + res.status);
-  return res.json();
-}
-async function apiDelete(path) {
-  const res = await fetch(API_URL + path, { method: 'DELETE' });
-  if (!res.ok) throw new Error('API error ' + res.status);
+// ══════════════════════════════
+//  API
+// ══════════════════════════════
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_URL + path, opts);
+  if (!res.ok) throw new Error('API ' + res.status);
   return res.json();
 }
 
-async function save() {
-  // Individual operations call API directly — this is just a local cache sync
+// ══════════════════════════════
+//  STORAGE
+// ══════════════════════════════
+async function cloudLoad() {
+  const [d, da] = await Promise.all([api('GET','/departments'), api('GET','/dashboards')]);
+  depts = d; dashes = da;
   localStorage.setItem('pbi_depts', JSON.stringify(depts));
   localStorage.setItem('pbi_dashes', JSON.stringify(dashes));
 }
 
-async function load() {
-  if (!API_URL) {
-    // Fallback to localStorage if API not configured
-    try { depts = JSON.parse(localStorage.getItem('pbi_depts')) || []; } catch(e){ depts=[]; }
-    try { dashes = JSON.parse(localStorage.getItem('pbi_dashes')) || []; } catch(e){ dashes=[]; }
-    return;
+function localLoad() {
+  try { depts = JSON.parse(localStorage.getItem('pbi_depts')) || []; } catch(e) { depts = []; }
+  try { dashes = JSON.parse(localStorage.getItem('pbi_dashes')) || []; } catch(e) { dashes = []; }
+}
+
+function localSave() {
+  localStorage.setItem('pbi_depts', JSON.stringify(depts));
+  localStorage.setItem('pbi_dashes', JSON.stringify(dashes));
+}
+
+// ══════════════════════════════
+//  HELPERS
+// ══════════════════════════════
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function slugify(s) { return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,''); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════
+//  VIEWS
+// ══════════════════════════════
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════
+//  TOAST
+// ══════════════════════════════
+let toastTimer;
+function toast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (err ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════
+//  CONFIRM
+// ══════════════════════════════
+let confirmCb = null;
+function confirm2(title, body, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').innerHTML = body;
+  confirmCb = cb;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+document.getElementById('btn-cancel-confirm').onclick = () => {
+  document.getElementById('confirm-overlay').classList.remove('open');
+  confirmCb = null;
+};
+document.getElementById('btn-ok-confirm').onclick = () => {
+  document.getElementById('confirm-overlay').classList.remove('open');
+  if (confirmCb) confirmCb();
+  confirmCb = null;
+};
+document.getElementById('confirm-overlay').onclick = e => {
+  if (e.target === document.getElementById('confirm-overlay')) {
+    document.getElementById('confirm-overlay').classList.remove('open');
+    confirmCb = null;
   }
-  try {
-    const [deptsData, dashesData] = await Promise.all([
-      apiGet('/departments'),
-      apiGet('/dashboards')
-    ]);
-    depts = deptsData;
-    dashes = dashesData;
-    localStorage.setItem('pbi_depts', JSON.stringify(depts));
-    localStorage.setItem('pbi_dashes', JSON.stringify(dashes));
-  } catch(e) {
-    console.warn('API load failed, using local cache', e);
-    try { depts = JSON.parse(localStorage.getItem('pbi_depts')) || []; } catch(e){ depts=[]; }
-    try { dashes = JSON.parse(localStorage.getItem('pbi_dashes')) || []; } catch(e){ dashes=[]; }
+};
+
+// ══════════════════════════════
+//  COPY
+// ══════════════════════════════
+function copyTxt(text) {
+  navigator.clipboard.writeText(text)
+    .then(() => toast('Link copied! 📋'))
+    .catch(() => { prompt('Copy this link:', text); });
+}
+function copyAdminLink() {
+  copyTxt(window.location.href.split('?')[0] + '?admin=true');
+}
+
+// ══════════════════════════════
+//  CLOUD SETUP
+// ══════════════════════════════
+function toggleSetup() {
+  const p = document.getElementById('setup-panel');
+  const isOpen = p.style.display === 'block';
+  p.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    document.getElementById('setup-url').value = API_URL || '';
+    updateBadge();
   }
 }
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-function slug(s){ return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,''); }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ═══════════════════════════
-//  VIEWS
-// ═══════════════════════════
-function show(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function updateBadge() {
+  const b = document.getElementById('api-badge');
+  if (!b) return;
+  if (API_URL) { b.textContent = '🟢 Connected'; b.className = 'api-badge on'; }
+  else { b.textContent = '⚪ Not connected'; b.className = 'api-badge'; }
+}
 
-// ═══════════════════════════
-//  DEPT LINK
-// ═══════════════════════════
-function deptLink(s){ return window.location.href.split('?')[0]+'?dept='+s; }
+async function testConnection() {
+  const url = document.getElementById('setup-url').value.trim();
+  const st = document.getElementById('setup-status');
+  if (!url) { st.textContent = '❌ Enter URL first'; st.style.color = 'var(--red)'; return; }
+  st.textContent = '⏳ Testing...'; st.style.color = 'var(--txm)';
+  try {
+    const r = await fetch(url + '/health');
+    const j = await r.json();
+    st.textContent = '✅ Connected! Project: ' + j.project;
+    st.style.color = '#27ae60';
+  } catch(e) {
+    st.textContent = '❌ Cannot reach API: ' + e.message;
+    st.style.color = 'var(--red)';
+  }
+}
 
-// ═══════════════════════════
+async function saveCloudSetup() {
+  const url = document.getElementById('setup-url').value.trim();
+  const st = document.getElementById('setup-status');
+  if (!url) { st.textContent = '❌ Enter URL'; st.style.color = 'var(--red)'; return; }
+  st.textContent = '⏳ Connecting...'; st.style.color = 'var(--txm)';
+  try {
+    const r = await fetch(url + '/health');
+    if (!r.ok) throw new Error('Cannot reach API');
+    API_URL = url;
+    localStorage.setItem('pbi_api_url', url);
+    await cloudLoad();
+    st.textContent = '✅ Connected! Loaded ' + depts.length + ' departments.';
+    st.style.color = '#27ae60';
+    updateBadge();
+    renderAdmin();
+    toast('Cloud connected ✅');
+  } catch(e) {
+    st.textContent = '❌ ' + e.message;
+    st.style.color = 'var(--red)';
+  }
+}
+
+async function syncFromCloud() {
+  const btn = document.querySelector('[onclick="syncFromCloud()"]');
+  if (btn) { btn.textContent = '⏳ Syncing...'; btn.disabled = true; }
+  try {
+    await cloudLoad();
+    renderAdmin();
+    toast('Synced ✅ ' + depts.length + ' departments');
+  } catch(e) {
+    toast('Sync failed', true);
+  }
+  if (btn) { btn.textContent = '↻ Sync'; btn.disabled = false; }
+}
+
+// ══════════════════════════════
 //  RENDER ADMIN
-// ═══════════════════════════
+// ══════════════════════════════
 function renderAdmin() {
-  const grid = document.getElementById('dept-admin-grid');
+  updateBadge();
+  const grid = document.getElementById('dept-grid');
   grid.innerHTML = '';
   if (depts.length === 0) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🏢</div><p>No departments yet. Create one above.</p></div>`;
+    grid.innerHTML = '<div class="empty"><div class="ei">🏢</div><p>No departments yet. Create one above.</p></div>';
     return;
   }
   depts.forEach(dept => {
     const myDashes = dashes.filter(d => d.deptId === dept.id);
-    const link = deptLink(dept.slug);
+    const link = window.location.href.split('?')[0] + '?dept=' + dept.slug;
+    const limit = dept.deviceLimit || 1;
+    const ids = Array.isArray(dept.deviceIds) ? dept.deviceIds : (dept.lockedDeviceId ? [dept.lockedDeviceId] : []);
+    const count = ids.length;
+
+    let deviceHtml = '';
+    if (count === 0) {
+      deviceHtml = `<div class="device-free">⚪ No devices registered — first ${limit} opener(s) get access</div>`;
+    } else if (count >= limit) {
+      deviceHtml = `<div class="device-row"><div class="device-info">🔒 ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+    } else {
+      deviceHtml = `<div class="device-row" style="background:#f0fbf0"><div class="device-info" style="color:#27ae60">🟢 ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+    }
+
     const card = document.createElement('div');
-    card.className = 'dept-admin-card';
+    card.className = 'dept-card';
     card.innerHTML = `
-      <div class="dac-head">
-        <h3>${esc(dept.name)} <span class="badge">${myDashes.length} dashboards</span></h3>
-        <div class="dac-actions">
-          <button class="icon-btn" title="Add Dashboard" onclick="toggleAddDash('${dept.id}')">＋</button>
-          <button class="icon-btn red" title="Delete Department" onclick="confirmDeleteDept('${dept.id}')">✕</button>
+      <div class="dc-head">
+        <h3>${esc(dept.name)} <span class="dc-badge">${myDashes.length} dashboards</span></h3>
+        <div class="dc-actions">
+          <button class="icn-btn" onclick="toggleAddDash('${dept.id}')" title="Add Dashboard">＋</button>
+          <button class="icn-btn red" onclick="deleteDept('${dept.id}')" title="Delete">✕</button>
         </div>
       </div>
       <div class="toggle-row">
         <div class="toggle-label">
-          <span class="status-dot ${dept.shareEnabled?'on':''}"></span>
-          <span class="status-txt ${dept.shareEnabled?'on':''}">Link ${dept.shareEnabled?'Active':'Restricted'}</span>
+          <span class="sdot ${dept.shareEnabled?'on':''}"></span>
+          <span class="stxt ${dept.shareEnabled?'on':''}">Link ${dept.shareEnabled?'Active':'Restricted'}</span>
         </div>
-        <label class="toggle-switch">
-          <input type="checkbox" ${dept.shareEnabled?'checked':''} onchange="toggleShare('${dept.id}',this.checked)" />
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
+        <label class="toggle-sw">
+          <input type="checkbox" ${dept.shareEnabled?'checked':''} onchange="toggleShare('${dept.id}',this.checked)">
+          <div class="t-track"></div>
+          <div class="t-thumb"></div>
         </label>
       </div>
       <div class="link-row">
         <span class="link-tag" title="${esc(link)}">${esc(link)}</span>
-        <button class="copy-btn" onclick="copyTxt('${esc(link)}')" ${dept.shareEnabled?'':'style="opacity:.45;pointer-events:none"'}>📋 Copy Link</button>
+        <button class="copy-btn" onclick="copyTxt('${esc(link)}')" ${dept.shareEnabled?'':'style="opacity:.4;pointer-events:none"'}>📋 Copy</button>
       </div>
-      ${(()=>{
-        const limit = dept.deviceLimit || 1;
-        const ids = dept.deviceIds || (dept.lockedDeviceId ? [dept.lockedDeviceId] : []);
-        const count = ids.length;
-        if (count === 0) return `<div class="device-free">⚪ No devices registered — first ${limit} opener(s) get access</div>`;
-        if (count >= limit) return `<div class="device-row"><div class="device-info"><span class="di">🔒</span> ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
-        return `<div class="device-row" style="background:#f0fbf0"><div class="device-info" style="color:#27ae60"><span class="di">🟢</span> ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
-      })()}
+      ${deviceHtml}
       <div class="dash-list" id="dl-${dept.id}">
         ${myDashes.length === 0
-          ? `<div class="no-dash">No dashboards assigned yet</div>`
-          : myDashes.map(d=>`
+          ? '<div class="no-dash">No dashboards assigned yet</div>'
+          : myDashes.map(d => `
             <div class="dash-item">
-              <div>
+              <div style="overflow:hidden">
                 <div class="dash-item-name">${esc(d.name)}</div>
-                <div class="dash-item-link">${esc(d.link)}</div>
+                <div class="dash-item-url">${esc(d.link)}</div>
               </div>
-              <button class="dash-item-del" onclick="deleteDash('${d.id}')" title="Remove">✕</button>
+              <button class="dash-del" onclick="deleteDash('${d.id}')" title="Remove">✕</button>
             </div>`).join('')
         }
       </div>
       <div class="add-dash-form" id="adf-${dept.id}">
-        <div class="row">
+        <div class="arow">
           <input type="text" placeholder="Dashboard name" id="dn-${dept.id}" />
-          <input type="text" placeholder="Power BI link (https://...)" id="dl2-${dept.id}" style="flex:2" />
+          <input type="text" placeholder="Power BI link (https://...)" id="dl-${dept.id}" style="flex:2" />
           <button class="gbtn sm" onclick="addDash('${dept.id}')">Add</button>
         </div>
       </div>
@@ -538,168 +566,165 @@ function renderAdmin() {
   });
 }
 
-// ═══════════════════════════
-//  ADD / DELETE DEPT
-// ═══════════════════════════
+// ══════════════════════════════
+//  ADD DEPT
+// ══════════════════════════════
 function addDept() {
   const name = document.getElementById('new-dept-name').value.trim();
-  const icon = '📊';
   if (!name) { toast('Enter a department name', true); return; }
-  const s = slug(name);
-  if (depts.find(d=>d.slug===s)) { toast('Department name already exists', true); return; }
-  const deviceLimit = parseInt(document.getElementById('new-dept-devices').value) || 1;
-  const newDept = { id:uid(), name, icon, slug:s, shareEnabled:true, lockedDeviceId:null, deviceLimit, deviceIds:[] };
+  const s = slugify(name);
+  if (depts.find(d => d.slug === s)) { toast('Department already exists', true); return; }
+  const limit = parseInt(document.getElementById('new-dept-limit').value) || 1;
+  const newDept = { id: uid(), name, icon: '📊', slug: s, shareEnabled: true, lockedDeviceId: null, deviceLimit: limit, deviceIds: [] };
   depts.push(newDept);
-  if (API_URL) { apiPost('/departments', newDept).catch(e => toast('Cloud sync failed', true)); }
-  save(); renderAdmin();
-  document.getElementById('new-dept-name').value='';
-  document.getElementById('new-dept-devices').value='1';
+  if (API_URL) api('POST', '/departments', newDept).catch(() => {});
+  localSave();
+  renderAdmin();
+  document.getElementById('new-dept-name').value = '';
+  document.getElementById('new-dept-limit').value = '1';
   toast('Department created ✓');
 }
 
-function toggleShare(id, enabled) {
-  const dept = depts.find(d=>d.id===id);
+// ══════════════════════════════
+//  DELETE DEPT
+// ══════════════════════════════
+function deleteDept(id) {
+  const dept = depts.find(d => d.id === id);
   if (!dept) return;
-  dept.shareEnabled = enabled;
-  if (API_URL) { apiPut('/departments/' + id, { shareEnabled: enabled }).catch(()=>{}); }
-  save(); renderAdmin();
-  toast(enabled ? 'Link activated — shareable ✓' : 'Link restricted — access blocked');
+  const cnt = dashes.filter(d => d.deptId === id).length;
+  confirm2('Delete Department', `Delete <strong>${esc(dept.name)}</strong>? This removes ${cnt} dashboard(s).`, () => {
+    depts = depts.filter(d => d.id !== id);
+    dashes = dashes.filter(d => d.deptId !== id);
+    if (API_URL) api('DELETE', '/departments/' + id).catch(() => {});
+    localSave();
+    renderAdmin();
+    toast('Department deleted');
+  });
 }
 
-// ═══════════════════════════
-//  DEVICE LOCK
-// ═══════════════════════════
+// ══════════════════════════════
+//  TOGGLE SHARE
+// ══════════════════════════════
+function toggleShare(id, enabled) {
+  const dept = depts.find(d => d.id === id);
+  if (!dept) return;
+  dept.shareEnabled = enabled;
+  if (API_URL) api('PUT', '/departments/' + id, { shareEnabled: enabled }).catch(() => {});
+  localSave();
+  renderAdmin();
+  toast(enabled ? 'Link activated ✓' : 'Link restricted');
+}
+
+// ══════════════════════════════
+//  DEVICE
+// ══════════════════════════════
 function getDeviceId() {
   let did = localStorage.getItem('pbi_device_id');
   if (!did) {
-    did = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,10);
+    did = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
     localStorage.setItem('pbi_device_id', did);
   }
   return did;
 }
 
 function resetDevice(id) {
-  const dept = depts.find(d=>d.id===id);
+  const dept = depts.find(d => d.id === id);
   if (!dept) return;
-  showConfirm(
-    'Reset Device Lock',
-    `Reset device lock for <strong>${esc(dept.name)}</strong>?<br><br>The next device that opens this link will become the new authorised device.`,
-    () => {
-      dept.lockedDeviceId = null;
-      dept.deviceIds = [];
-      if (API_URL) { apiPut('/departments/' + id, { lockedDeviceId: null }).catch(()=>{}); }
-      save(); renderAdmin();
-      toast('Device lock reset — next ' + (dept.deviceLimit||1) + ' opener(s) get access');
-    }
-  );
-}
-
-function confirmDeleteDept(id) {
-  const dept = depts.find(d=>d.id===id);
-  if (!dept) return;
-  const cnt = dashes.filter(d=>d.deptId===id).length;
-  showConfirm(
-    'Delete Department',
-    `Delete <strong>${esc(dept.name)}</strong>? This will also remove ${cnt} dashboard(s).`,
-    () => {
-      depts=depts.filter(d=>d.id!==id);
-      dashes=dashes.filter(d=>d.deptId!==id);
-      if (API_URL) { apiDelete('/departments/' + id).catch(()=>{}); }
-      save(); renderAdmin(); toast('Department deleted');
-    }
-  );
-}
-
-// ═══════════════════════════
-//  ADD / DELETE DASH
-// ═══════════════════════════
-function toggleAddDash(deptId) {
-  const form = document.getElementById('adf-'+deptId);
-  form.classList.toggle('open');
-  if (form.classList.contains('open')) document.getElementById('dn-'+deptId).focus();
-}
-
-function addDash(deptId) {
-  const name = document.getElementById('dn-'+deptId).value.trim();
-  const link = document.getElementById('dl2-'+deptId).value.trim();
-  if (!name || !link) { toast('Fill both name and link', true); return; }
-  const newDash = { id:uid(), name, deptId, link };
-  dashes.push(newDash);
-  if (API_URL) {
-    apiPost('/dashboards', newDash)
-      .then(() => toast('Dashboard added ✓'))
-      .catch(e => toast('Dashboard added locally but cloud sync failed: ' + e.message, true));
-  } else {
-    toast('Dashboard added ✓');
-  }
-  save(); renderAdmin();
-}
-
-function deleteDash(id) {
-  const dash = dashes.find(d=>d.id===id);
-  if (!dash) return;
-  showConfirm('Remove Dashboard', `Remove <strong>${esc(dash.name)}</strong> from this department?`, () => {
-    dashes=dashes.filter(d=>d.id!==id);
-    if (API_URL) { apiDelete('/dashboards/' + id).catch(()=>{}); }
-    save(); renderAdmin(); toast('Dashboard removed');
+  confirm2('Reset Device Lock', `Reset all devices for <strong>${esc(dept.name)}</strong>?<br>Next ${dept.deviceLimit||1} opener(s) will get access.`, () => {
+    dept.lockedDeviceId = null;
+    dept.deviceIds = [];
+    if (API_URL) api('PUT', '/departments/' + id, { lockedDeviceId: null }).catch(() => {});
+    localSave();
+    renderAdmin();
+    toast('Device lock reset ✓');
   });
 }
 
-// ═══════════════════════════
+// ══════════════════════════════
+//  ADD DASH
+// ══════════════════════════════
+function toggleAddDash(deptId) {
+  const form = document.getElementById('adf-' + deptId);
+  form.classList.toggle('open');
+  if (form.classList.contains('open')) document.getElementById('dn-' + deptId).focus();
+}
+
+function addDash(deptId) {
+  const name = document.getElementById('dn-' + deptId).value.trim();
+  const link = document.getElementById('dl-' + deptId).value.trim();
+  if (!name || !link) { toast('Fill both name and link', true); return; }
+  const newDash = { id: uid(), name, deptId, link };
+  dashes.push(newDash);
+  if (API_URL) {
+    api('POST', '/dashboards', newDash)
+      .then(() => toast('Dashboard saved to cloud ✓'))
+      .catch(() => toast('Saved locally only', true));
+  } else {
+    toast('Dashboard added ✓');
+  }
+  localSave();
+  renderAdmin();
+}
+
+// ══════════════════════════════
+//  DELETE DASH
+// ══════════════════════════════
+function deleteDash(id) {
+  const dash = dashes.find(d => d.id === id);
+  if (!dash) return;
+  confirm2('Remove Dashboard', `Remove <strong>${esc(dash.name)}</strong>?`, () => {
+    dashes = dashes.filter(d => d.id !== id);
+    if (API_URL) api('DELETE', '/dashboards/' + id).catch(() => {});
+    localSave();
+    renderAdmin();
+    toast('Dashboard removed');
+  });
+}
+
+// ══════════════════════════════
 //  DEPT PUBLIC VIEW
-// ═══════════════════════════
-function openDeptView(s, skipDeviceCheck) {
-  const dept = depts.find(d=>d.slug===s);
+// ══════════════════════════════
+function openDeptView(slug, skipDeviceCheck) {
+  const dept = depts.find(d => d.slug === slug);
   if (!dept) { show('notfound-view'); return; }
   if (!dept.shareEnabled && !skipDeviceCheck) { show('restricted-view'); return; }
 
-  // Device limit check — skip if admin is previewing
   if (!skipDeviceCheck) {
-    const myDeviceId = getDeviceId();
+    const myId = getDeviceId();
     const limit = dept.deviceLimit || 1;
-    // Migrate old lockedDeviceId to deviceIds array
-    if (!dept.deviceIds) {
-      dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
-    }
+    if (!dept.deviceIds) dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
     const ids = dept.deviceIds;
-    if (ids.includes(myDeviceId)) {
-      // Already registered — allow
+    if (ids.includes(myId)) {
+      // already registered — ok
     } else if (ids.length < limit) {
-      // Under limit — register this device
-      ids.push(myDeviceId);
+      ids.push(myId);
       dept.lockedDeviceId = ids[0];
-      if (API_URL) {
-        apiPut('/departments/' + dept.id, {
-          lockedDeviceId: JSON.stringify(ids)
-        }).catch(()=>{});
-      }
-      save();
+      localSave();
+      if (API_URL) api('PUT', '/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids) }).catch(() => {});
     } else {
-      // Over limit — block
       show('blocked-view');
       return;
     }
   }
 
-  const myDashes = dashes.filter(d=>d.deptId===dept.id);
-
-  currentDeptSlug = s;
-  // Keep URL in sync so refresh works
+  currentDeptSlug = slug;
   const url = new URL(window.location.href);
-  url.searchParams.set('dept', s);
+  url.searchParams.set('dept', slug);
+  url.searchParams.delete('dash');
   window.history.replaceState({}, '', url.toString());
 
+  const myDashes = dashes.filter(d => d.deptId === dept.id);
   document.getElementById('dv-name').textContent = dept.name;
-  document.getElementById('dv-sub').textContent = myDashes.length+' dashboard'+(myDashes.length!==1?'s':'')+' available';
+  document.getElementById('dv-sub').textContent = myDashes.length + ' dashboard' + (myDashes.length !== 1 ? 's' : '') + ' available';
 
   const grid = document.getElementById('dept-dash-grid');
   grid.innerHTML = '';
   if (myDashes.length === 0) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">📉</div><p>No dashboards assigned yet.</p></div>`;
+    grid.innerHTML = '<div class="empty"><div class="ei">📉</div><p>No dashboards assigned yet.</p></div>';
   } else {
     myDashes.forEach(d => {
       const card = document.createElement('div');
-      card.className = 'dash-card';
+      card.className = 'dash-pub-card';
       card.onclick = () => openIframe(d.name, d.link, d.id);
       card.innerHTML = `<h3>${esc(d.name)}</h3><span>VIEW DASHBOARD →</span>`;
       grid.appendChild(card);
@@ -708,305 +733,116 @@ function openDeptView(s, skipDeviceCheck) {
   show('dept-view');
 }
 
-// ═══════════════════════════
+// ══════════════════════════════
 //  IFRAME
-// ═══════════════════════════
-let currentDeptSlug = '';
-let currentDashId = '';
-
-function openInNewTab() {
-  const src = document.getElementById('dashFrame').src;
-  if (src) window.open(src, '_blank');
-}
-
-function getEmbedUrl(link) {
-  try {
-    // For Power BI public/published links — add chromeless param to remove header
-    let url = new URL(link);
-    // Already an embed link
-    if (link.includes('/view?') || link.includes('embedUrl') || link.includes('chromeless')) {
-      return link;
-    }
-    // Convert report link to embed
-    if (link.includes('app.powerbi.com/reportEmbed')) {
-      return link;
-    }
-    if (link.includes('app.powerbi.com')) {
-      // Add chromeless=1 to remove Power BI chrome and allow iframe
-      url.searchParams.set('chromeless', '1');
-      return url.toString();
-    }
-    return link;
-  } catch(e) { return link; }
-}
-
+// ══════════════════════════════
 function openIframe(name, link, dashId) {
-  // Auto-hide hint after 3 seconds
-  const hint = document.getElementById('iframe-hint');
-  const controls = document.getElementById('iframe-controls');
-  if (hint) {
-    hint.style.opacity = '1';
-    setTimeout(() => { hint.style.opacity = '0'; }, 3000);
-  }
-  // Show controls on mouse move near top-left
-  document.addEventListener('mousemove', function showCtrl(e) {
-    if (!controls) return;
-    if (e.clientY < 80 && e.clientX < 200) {
-      controls.style.opacity = '1';
-    } else {
-      controls.style.opacity = '0';
-    }
-  });
   currentDashId = dashId || '';
-  const embedUrl = getEmbedUrl(link);
-  // Save link in sessionStorage so refresh can reload it
-  sessionStorage.setItem('pbi_active_link', link);
-  sessionStorage.setItem('pbi_active_name', name);
-  // Set title
-  const titleEl = document.getElementById('if-title');
-  if (titleEl) titleEl.textContent = name;
-  // Keep both dept and dash in URL so refresh restores correctly
+  sessionStorage.setItem('pbi_link', link);
+  sessionStorage.setItem('pbi_name', name);
+  sessionStorage.setItem('pbi_dash', dashId || '');
+
+  document.getElementById('if-title').textContent = name;
+
   const url = new URL(window.location.href);
   url.searchParams.set('dept', currentDeptSlug);
   if (dashId) url.searchParams.set('dash', dashId);
   window.history.replaceState({}, '', url.toString());
+
   show('iframe-view');
-  // Set iframe src AFTER showing view
-  setTimeout(() => {
-    document.getElementById('dashFrame').src = embedUrl;
-  }, 50);
+  setTimeout(() => { document.getElementById('dashFrame').src = link; }, 80);
 }
 
-function refreshDashboard() {
-  const frame = document.getElementById('dashFrame');
-  const spinIcon = document.getElementById('spin-icon');
-  const currentSrc = frame.src;
-  if (!currentSrc) return;
-  if (spinIcon) spinIcon.style.animation = 'spin .7s linear infinite';
-  frame.src = '';
-  setTimeout(() => {
-    frame.src = currentSrc;
-    frame.onload = () => { if (spinIcon) spinIcon.style.animation = ''; };
-    setTimeout(() => { if (spinIcon) spinIcon.style.animation = ''; }, 8000);
-  }, 150);
-}
-
-document.getElementById('iframe-back').addEventListener('click', () => {
-  document.getElementById('dashFrame').src='';
+document.getElementById('btn-back').onclick = function() {
+  document.getElementById('dashFrame').src = '';
   currentDashId = '';
-  sessionStorage.removeItem('pbi_active_link');
-  sessionStorage.removeItem('pbi_active_name');
+  sessionStorage.removeItem('pbi_link');
+  sessionStorage.removeItem('pbi_name');
+  sessionStorage.removeItem('pbi_dash');
   const url = new URL(window.location.href);
   url.searchParams.delete('dash');
   window.history.replaceState({}, '', url.toString());
-  if (currentDeptSlug) {
-    openDeptView(currentDeptSlug, false);
-  } else {
-    show('dept-view');
-  }
-});
+  if (currentDeptSlug) openDeptView(currentDeptSlug, false);
+  else show('dept-view');
+};
 
-// ═══════════════════════════
-//  CONFIRM DIALOG
-// ═══════════════════════════
-let confirmCb = null;
-function showConfirm(title, body, cb) {
-  document.getElementById('confirm-title').textContent = title;
-  document.getElementById('confirm-body').innerHTML = body;
-  confirmCb = cb;
-  document.getElementById('confirm-overlay').classList.add('open');
-}
-function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); confirmCb=null; }
-document.getElementById('confirm-ok').onclick = () => { if(confirmCb) confirmCb(); closeConfirm(); };
-document.getElementById('confirm-overlay').onclick = e => { if(e.target===document.getElementById('confirm-overlay')) closeConfirm(); };
+document.getElementById('btn-refresh').onclick = function() {
+  const frame = document.getElementById('dashFrame');
+  const src = frame.src;
+  if (!src) return;
+  const spin = this;
+  spin.style.animation = 'spin .7s linear infinite';
+  frame.src = '';
+  setTimeout(() => {
+    frame.src = src;
+    frame.onload = () => { spin.style.animation = ''; };
+    setTimeout(() => { spin.style.animation = ''; }, 8000);
+  }, 150);
+};
 
-// ═══════════════════════════
-//  TOAST
-// ═══════════════════════════
-let tt;
-function toast(msg, err) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = err?'show err':'show';
-  clearTimeout(tt); tt = setTimeout(()=>el.classList.remove('show'),2600);
-}
-
-// ═══════════════════════════
-//  COPY
-// ═══════════════════════════
-// ═══════════════════════════
-//  CLOUD SETUP
-// ═══════════════════════════
-function toggleSetup() {
-  const p = document.getElementById('setup-panel');
-  p.style.display = p.style.display === 'none' ? 'block' : 'none';
-  if (p.style.display === 'block') {
-    document.getElementById('setup-apiurl').value = API_URL || '';
-    updateApiBadge();
-  }
-}
-
-function updateApiBadge() {
-  const badge = document.getElementById('api-status-badge');
-  if (!badge) return;
-  if (API_URL) {
-    badge.textContent = '🟢 Connected';
-    badge.style.background = '#e8f5e9';
-    badge.style.color = '#27ae60';
-  } else {
-    badge.textContent = '⚪ Not connected';
-    badge.style.background = '#f0f4ee';
-    badge.style.color = 'var(--txm)';
-  }
-}
-
-async function testApiConnection() {
-  const url = document.getElementById('setup-apiurl').value.trim();
-  const status = document.getElementById('setup-status');
-  if (!url) { status.textContent = '❌ Enter your Cloud Run URL first'; status.style.color='var(--red)'; return; }
-  status.textContent = '⏳ Testing connection...'; status.style.color='var(--txm)';
-  try {
-    const res = await fetch(url + '/health');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    status.textContent = '✅ Connected! Project: ' + json.project + ', Dataset: ' + json.dataset;
-    status.style.color = '#27ae60';
-  } catch(e) {
-    status.textContent = '❌ Cannot reach API: ' + e.message;
-    status.style.color = 'var(--red)';
-  }
-}
-
-async function saveCloudSetup() {
-  const url = document.getElementById('setup-apiurl').value.trim();
-  const status = document.getElementById('setup-status');
-  if (!url) { status.textContent = '❌ Enter your Cloud Run URL'; status.style.color='var(--red)'; return; }
-  status.textContent = '⏳ Connecting to BigQuery...'; status.style.color='var(--txm)';
-  try {
-    const res = await fetch(url + '/health');
-    if (!res.ok) throw new Error('Cannot reach API — check URL');
-    API_URL = url;
-    localStorage.setItem('pbi_api_url', url);
-    // Load fresh data from BigQuery
-    await load();
-    status.textContent = '✅ Connected! Loaded ' + depts.length + ' departments from BigQuery.';
-    status.style.color = '#27ae60';
-    updateApiBadge();
-    renderAdmin();
-    toast('GCP BigQuery connected ✅ Data syncs across all devices');
-  } catch(e) {
-    status.textContent = '❌ ' + e.message;
-    status.style.color = 'var(--red)';
-  }
-}
-
-async function syncFromCloud() {
-  if (!API_URL) { toast('Set up Cloud Run API first (⚙ Cloud Setup)', true); return; }
-  const btn = document.getElementById('sync-btn');
-  btn.textContent = '⏳ Syncing...'; btn.disabled = true;
-  try {
-    await load();
-    renderAdmin();
-    toast('Synced from BigQuery ✅ ' + depts.length + ' departments loaded');
-  } catch(e) {
-    toast('Sync failed — check your API', true);
-  }
-  btn.textContent = '↻ Sync'; btn.disabled = false;
-}
-
-function copyTxt(text) {
-  navigator.clipboard.writeText(text).then(()=>toast('Link copied! 📋')).catch(()=>{ prompt('Copy this link:',text); });
-}
-
-function copyAdminLink() {
-  const link = window.location.href.split('?')[0] + '?admin=true';
-  navigator.clipboard.writeText(link).then(()=>toast('Admin link copied! Share this to open admin from any device 📋')).catch(()=>{ prompt('Copy admin link:', link); });
-}
-
-// ═══════════════════════════
-//  KEYBOARD
-// ═══════════════════════════
-document.addEventListener('keydown', e => {
-  if (e.key==='Enter') {
-    const av = document.getElementById('admin-view');
-    if (av.classList.contains('active')) {
-      const focused = document.activeElement;
-      if (focused && focused.id==='new-dept-name') addDept();
-    }
-  }
-  if (e.key==='Escape') closeConfirm();
-});
-
-// ═══════════════════════════
+// ══════════════════════════════
 //  INIT
-// ═══════════════════════════
-//  SHOW LOADING SPINNER ON STARTUP
-// ═══════════════════════════
-document.body.insertAdjacentHTML('beforeend', `
-  <div id="app-loader" style="position:fixed;inset:0;background:var(--gp);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999">
-    <div style="font-size:36px;animation:spin .8s linear infinite;margin-bottom:16px">↻</div>
-    <div style="font-size:13px;color:var(--txm);font-weight:500">Loading portal...</div>
-  </div>
-`);
-
+// ══════════════════════════════
 async function init() {
-  await load();
-  document.getElementById('app-loader').remove();
+  // Try cloud first, fallback to local
+  try {
+    if (API_URL) await cloudLoad();
+    else localLoad();
+  } catch(e) {
+    localLoad();
+  }
+
+  document.getElementById('app-loader').style.display = 'none';
 
   const params = new URLSearchParams(window.location.search);
-const adminParam = params.get('admin');
-const deptParam = params.get('dept');
-const dashParam = params.get('dash');
-if (adminParam === 'true') {
-  // Admin portal — open from any device, no lock check
-  sessionStorage.setItem('pbi_from_admin', 'true');
-  renderAdmin();
-  show('admin-view');
-} else if (deptParam && dashParam) {
-  sessionStorage.setItem('pbi_from_admin', 'false');
-  // Restore directly to dashboard iframe
-  const dept = depts.find(d => d.slug === deptParam);
-  if (!dept) { show('notfound-view'); }
-  else if (!dept.shareEnabled) { show('restricted-view'); }
-  else {
-    const myDeviceId = getDeviceId();
-    const limit2 = dept.deviceLimit || 1;
+  const adminParam = params.get('admin');
+  const deptParam = params.get('dept');
+  const dashParam = params.get('dash');
+
+  if (adminParam === 'true') {
+    renderAdmin();
+    show('admin-view');
+  } else if (deptParam && dashParam) {
+    const dept = depts.find(d => d.slug === deptParam);
+    if (!dept) { show('notfound-view'); return; }
+    if (!dept.shareEnabled) { show('restricted-view'); return; }
+    const myId = getDeviceId();
+    const limit = dept.deviceLimit || 1;
     if (!dept.deviceIds) dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
-    const ids2 = dept.deviceIds;
-    if (ids2.includes(myDeviceId)) {
-      // already registered
-    } else if (ids2.length < limit2) {
-      ids2.push(myDeviceId);
-      dept.lockedDeviceId = ids2[0];
-      if (API_URL) { apiPut('/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids2) }).catch(()=>{}); }
-      save();
-    } else {
-      show('blocked-view');
-    } else {
-      const dash = dashes.find(d => d.id === dashParam);
-      // Try sessionStorage first (has the live link), fallback to stored link
-      const savedLink = sessionStorage.getItem('pbi_active_link');
-      const savedName = sessionStorage.getItem('pbi_active_name');
-      if (dash) {
-        currentDeptSlug = deptParam;
-        const linkToUse = savedLink || dash.link;
-        const nameToUse = savedName || dash.name;
-        openIframe(nameToUse, linkToUse, dash.id);
-      } else if (savedLink) {
-        currentDeptSlug = deptParam;
-        openIframe(savedName || 'Dashboard', savedLink, dashParam);
-      } else {
-        openDeptView(deptParam);
-      }
+    const ids = dept.deviceIds;
+    if (!ids.includes(myId) && ids.length >= limit) { show('blocked-view'); return; }
+    if (!ids.includes(myId)) {
+      ids.push(myId);
+      dept.lockedDeviceId = ids[0];
+      localSave();
+      if (API_URL) api('PUT', '/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids) }).catch(() => {});
     }
+    // Restore dashboard
+    currentDeptSlug = deptParam;
+    const savedLink = sessionStorage.getItem('pbi_link');
+    const savedName = sessionStorage.getItem('pbi_name');
+    const dash = dashes.find(d => d.id === dashParam);
+    if (savedLink) {
+      openIframe(savedName || 'Dashboard', savedLink, dashParam);
+    } else if (dash) {
+      openIframe(dash.name, dash.link, dash.id);
+    } else {
+      openDeptView(deptParam, false);
+    }
+  } else if (deptParam) {
+    openDeptView(deptParam, false);
+  } else {
+    renderAdmin();
+    show('admin-view');
   }
-} else if (deptParam) {
-  sessionStorage.setItem('pbi_from_admin', 'false');
-  openDeptView(deptParam, false);
-} else {
-  renderAdmin();
-  show('admin-view');
 }
-}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('confirm-overlay').classList.remove('open');
+    confirmCb = null;
+  }
+});
 
 init();
 </script>
