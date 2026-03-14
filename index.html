@@ -85,7 +85,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .dup-box .efg label{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px}
 .dup-box .efg input,.dup-box .efg select{padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);transition:.18s;width:100%}
 .dup-box .efg input:focus,.dup-box .efg select:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(106,168,79,.14)}
-.dup-dash-list{max-height:180px;overflow-y:auto;border:1.5px solid var(--gb);border-radius:7px;margin-bottom:14px}
+.dup-dash-list{max-height:300px;overflow-y:auto;border:1.5px solid var(--gb);border-radius:7px;margin-bottom:14px}
 .dup-dash-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #edf5e8}
 .dup-dash-row:last-child{border-bottom:none}
 .dup-dash-row span{font-size:12px;font-weight:500;color:var(--tx);flex:1}
@@ -331,6 +331,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
   <div class="static-view"><div class="sv-icon">🚫</div><h2 style="color:var(--red)">Device Not Authorised</h2><p>This link is already registered to another device.<br>Contact your administrator to reset access.</p></div>
 </div>
 
+<!-- RENAME MODAL -->
+<div id="rename-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);justify-content:center;align-items:center;z-index:9998">
+  <div style="background:#fff;border-radius:14px;padding:26px;width:380px;max-width:94vw;animation:pop .2s ease">
+    <h3 style="font-size:15px;font-weight:600;color:var(--g);margin-bottom:16px">✎ Rename Department</h3>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px">
+      <label style="font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px">Department Name</label>
+      <input type="text" id="rename-input" style="padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx)" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="cancel-btn" id="rename-cancel">Cancel</button>
+      <button class="gbtn" id="rename-save">Save Name</button>
+    </div>
+  </div>
+</div>
+
 <!-- DUPLICATE MODAL -->
 <div id="dup-modal">
   <div class="dup-box">
@@ -490,6 +505,15 @@ function confirm2(title, body, cb) {
   confirmCb = cb;
   document.getElementById('confirm-overlay').classList.add('open');
 }
+// Rename modal close
+document.getElementById('rename-cancel').onclick = () => {
+  document.getElementById('rename-modal').style.display = 'none';
+};
+document.getElementById('rename-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('rename-save').click();
+  if (e.key === 'Escape') document.getElementById('rename-modal').style.display = 'none';
+});
+
 // Dup modal close
 document.getElementById('dup-cancel').onclick = () => {
   document.getElementById('dup-modal').classList.remove('open');
@@ -648,6 +672,7 @@ function renderAdmin() {
         <div class="dc-actions">
           <button class="icn-btn" onclick="toggleAddDash('${dept.id}')" title="Add Dashboard">＋</button>
           <button class="icn-btn blue" onclick="duplicateDept('${dept.id}')" title="Duplicate Department">❐</button>
+          <button class="icn-btn" onclick="renameDept('${dept.id}')" title="Rename Department" style="border-color:rgba(255,220,100,.5)">✎</button>
           <button class="icn-btn red" onclick="deleteDept('${dept.id}')" title="Delete">✕</button>
         </div>
       </div>
@@ -719,6 +744,33 @@ function addDept() {
 // ══════════════════════════════
 //  DELETE DEPT
 // ══════════════════════════════
+function renameDept(id) {
+  const dept = depts.find(d => d.id === id);
+  if (!dept) return;
+  const input = document.getElementById('rename-input');
+  input.value = dept.name;
+  document.getElementById('rename-modal').style.display = 'flex';
+  setTimeout(() => { input.focus(); input.select(); }, 100);
+
+  document.getElementById('rename-save').onclick = async function() {
+    const newName = input.value.trim();
+    if (!newName) { toast('Enter a name', true); return; }
+    const newSlug = slugify(newName);
+    if (newSlug !== dept.slug && depts.find(d => d.slug === newSlug)) {
+      toast('Name already exists', true); return;
+    }
+    dept.name = newName;
+    dept.slug = newSlug;
+    if (API_URL) {
+      try { await api('PUT', '/departments/' + id, { name: newName }); } catch(e) {}
+    }
+    localSave();
+    renderAdmin();
+    document.getElementById('rename-modal').style.display = 'none';
+    toast('Department renamed ✓');
+  };
+}
+
 function duplicateDept(id) {
   const dept = depts.find(d => d.id === id);
   if (!dept) return;
@@ -748,24 +800,39 @@ function duplicateDept(id) {
     const s = slugify(newName);
     if (depts.find(d => d.slug === s)) { toast('Department name already exists', true); return; }
 
+    // Disable button to prevent double click
+    this.textContent = '⏳ Creating...';
+    this.disabled = true;
+
     // Create new department
     const newDept = { id: uid(), name: newName, icon: dept.icon || '📊', slug: s, shareEnabled: true, lockedDeviceId: null, deviceLimit: newLimit, deviceIds: [] };
     depts.push(newDept);
-    if (API_URL) api('POST', '/departments', newDept).catch(() => {});
+    if (API_URL) {
+      try { await api('POST', '/departments', newDept); } catch(e) {}
+    }
 
-    // Copy dashboards with new links
+    // Copy ALL dashboards one by one with delay to avoid BigQuery rate limit
+    let copied = 0;
     for (const d of myDashes) {
       const linkInput = document.getElementById('duplink-' + d.id);
-      const newLink = linkInput ? linkInput.value.trim() : d.link;
-      const newDash = { id: uid(), name: d.name, deptId: newDept.id, link: newLink || d.link };
+      const newLink = (linkInput ? linkInput.value.trim() : '') || d.link;
+      const newDash = { id: uid(), name: d.name, deptId: newDept.id, link: newLink };
       dashes.push(newDash);
-      if (API_URL) await api('POST', '/dashboards', newDash).catch(() => {});
+      if (API_URL) {
+        try {
+          await api('POST', '/dashboards', newDash);
+          await new Promise(r => setTimeout(r, 300)); // small delay between inserts
+        } catch(e) {}
+      }
+      copied++;
     }
 
     localSave();
     renderAdmin();
     document.getElementById('dup-modal').classList.remove('open');
-    toast('Department duplicated ✓ — ' + myDashes.length + ' dashboards copied');
+    this.textContent = 'Create Copy';
+    this.disabled = false;
+    toast('✓ Duplicated — ' + copied + '/' + myDashes.length + ' dashboards copied');
   };
 }
 
