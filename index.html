@@ -666,7 +666,7 @@ function openDeptView(s, skipDeviceCheck) {
     myDashes.forEach(d => {
       const card = document.createElement('div');
       card.className = 'dash-card';
-      card.onclick = () => openIframe(d.name, d.link, d.id);
+      card.onclick = () => window.open(d.link, '_blank');
       card.innerHTML = `<h3>${esc(d.name)}</h3><span>VIEW DASHBOARD →</span>`;
       grid.appendChild(card);
     });
