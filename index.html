@@ -65,15 +65,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 /* DEPT GRID */
 .dept-grid{display:flex;flex-direction:column;gap:8px}
 .dept-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);overflow:hidden}
-.dc-head{background:var(--g);color:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex:1}
+.dc-head{background:var(--g);color:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.dc-head-left{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;padding:2px 0}
+.dc-head-left:hover{opacity:.9}
+.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0}
 .dc-badge{font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:50px}
 .dc-actions{display:flex;gap:6px;align-items:center}
 .icn-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
 .icn-btn:hover{background:rgba(255,255,255,.2)}
 .icn-btn.red{border-color:rgba(255,150,150,.4)}.icn-btn.red:hover{background:rgba(255,100,100,.2)}
-.dc-toggle-arrow{font-size:12px;color:rgba(255,255,255,.7);transition:transform .2s;margin-left:4px}
-.dept-card.collapsed .dc-toggle-arrow{transform:rotate(-90deg)}
+.dc-toggle-arrow{font-size:11px;color:rgba(255,255,255,.8);width:18px;text-align:center;flex-shrink:0}
 .dept-card-body{transition:none}
 .dept-card.collapsed .dept-card-body{display:none}
 
@@ -538,14 +539,16 @@ function renderAdmin() {
     }
 
     const card = document.createElement('div');
-    card.className = 'dept-card';
+    card.className = 'dept-card collapsed';
     card.innerHTML = `
-      <div class="dc-head" id="dch-${dept.id}" onclick="toggleCollapse('${dept.id}')">
-        <h3>${esc(dept.name)} <span class="dc-badge">${myDashes.length} dashboards</span></h3>
-        <div class="dc-actions" onclick="event.stopPropagation()">
+      <div class="dc-head" id="dch-${dept.id}">
+        <div class="dc-head-left" onclick="toggleCollapse('${dept.id}')">
+          <span class="dc-toggle-arrow" id="arr-${dept.id}">▶</span>
+          <h3>${esc(dept.name)} <span class="dc-badge">${myDashes.length} dashboards</span></h3>
+        </div>
+        <div class="dc-actions">
           <button class="icn-btn" onclick="toggleAddDash('${dept.id}')" title="Add Dashboard">＋</button>
           <button class="icn-btn red" onclick="deleteDept('${dept.id}')" title="Delete">✕</button>
-          <span class="dc-toggle-arrow">▼</span>
         </div>
       </div>
       <div class="dept-card-body" id="dcb-${dept.id}">
@@ -631,11 +634,17 @@ function deleteDept(id) {
 //  TOGGLE SHARE
 // ══════════════════════════════
 function expandAll() {
-  document.querySelectorAll('.dept-card').forEach(card => card.classList.remove('collapsed'));
+  document.querySelectorAll('.dept-card').forEach(card => {
+    card.classList.remove('collapsed');
+  });
+  document.querySelectorAll('.dc-toggle-arrow').forEach(a => a.textContent = '▼');
 }
 
 function collapseAll() {
-  document.querySelectorAll('.dept-card').forEach(card => card.classList.add('collapsed'));
+  document.querySelectorAll('.dept-card').forEach(card => {
+    card.classList.add('collapsed');
+  });
+  document.querySelectorAll('.dc-toggle-arrow').forEach(a => a.textContent = '▶');
 }
 
 function toggleCollapse(id) {
@@ -644,6 +653,8 @@ function toggleCollapse(id) {
   const card = head.closest('.dept-card');
   if (!card) return;
   card.classList.toggle('collapsed');
+  const arrow = document.getElementById('arr-' + id);
+  if (arrow) arrow.textContent = card.classList.contains('collapsed') ? '▶' : '▼';
 }
 
 function toggleShare(id, enabled) {
