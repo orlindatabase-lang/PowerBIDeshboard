@@ -289,14 +289,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gp);color:var(-
         </div>
         <div class="fg" style="max-width:190px">
           <label>Device Limit</label>
-          <select id="new-dept-limit">
+          <select id="new-dept-limit" onchange="if(this.value==='custom-new'){document.getElementById('new-dept-limit-custom').style.display='block';document.getElementById('new-dept-limit-custom').focus();}else{document.getElementById('new-dept-limit-custom').style.display='none'}">
             <option value="1">1 Device</option>
             <option value="2">2 Devices</option>
             <option value="3">3 Devices</option>
+            <option value="4">4 Devices</option>
             <option value="5">5 Devices</option>
+            <option value="6">6 Devices</option>
+            <option value="7">7 Devices</option>
+            <option value="8">8 Devices</option>
+            <option value="9">9 Devices</option>
             <option value="10">10 Devices</option>
-            <option value="999">Unlimited</option>
+            <option value="custom-new">✏ Custom number...</option>
+            <option value="999">∞ Unlimited</option>
           </select>
+          <input type="number" id="new-dept-limit-custom" min="1" max="9999" placeholder="Enter any number..."
+            style="display:none;padding:9px 12px;border:1.5px solid var(--gl);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);margin-top:6px;width:100%"
+          />
         </div>
         <button class="gbtn" onclick="addDept()">Create Department</button>
       </div>
@@ -354,16 +363,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gp);color:var(-
     <p style="font-size:12px;color:var(--txm);margin-bottom:18px" id="devlimit-desc">Change how many devices can access this department link.</p>
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px">
       <label style="font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px">Device Limit</label>
-      <select id="devlimit-select" style="padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx)">
+      <select id="devlimit-select" onchange="handleDevLimitSelect(this.value)" style="padding:10px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx)">
         <option value="1">1 Device</option>
         <option value="2">2 Devices</option>
         <option value="3">3 Devices</option>
+        <option value="4">4 Devices</option>
         <option value="5">5 Devices</option>
+        <option value="6">6 Devices</option>
+        <option value="7">7 Devices</option>
+        <option value="8">8 Devices</option>
+        <option value="9">9 Devices</option>
         <option value="10">10 Devices</option>
-        <option value="20">20 Devices</option>
-        <option value="50">50 Devices</option>
-        <option value="999">Unlimited</option>
+        <option value="custom">✏ Custom number...</option>
+        <option value="999">∞ Unlimited</option>
       </select>
+      <input type="number" id="devlimit-custom" min="1" max="9999" placeholder="Enter any number e.g. 4, 7, 12..."
+        style="display:none;padding:10px 12px;border:1.5px solid var(--gl);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);margin-top:6px"
+        onfocus="this.style.boxShadow='0 0 0 3px rgba(106,168,79,.14)'"
+        onblur="this.style.boxShadow='none'"
+      />
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="cancel-btn" id="devlimit-cancel">Cancel</button>
@@ -402,9 +420,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gp);color:var(-
         <option value="1">1 Device</option>
         <option value="2">2 Devices</option>
         <option value="3">3 Devices</option>
+        <option value="4">4 Devices</option>
         <option value="5">5 Devices</option>
+        <option value="6">6 Devices</option>
+        <option value="7">7 Devices</option>
+        <option value="8">8 Devices</option>
+        <option value="9">9 Devices</option>
         <option value="10">10 Devices</option>
-        <option value="999">Unlimited</option>
+        <option value="999">∞ Unlimited</option>
       </select>
     </div>
     <div class="dup-section-title">Update Power BI Links (optional)</div>
@@ -910,7 +933,9 @@ function addDept() {
   if (!name) { toast('Enter a department name', true); return; }
   const s = slugify(name);
   if (depts.find(d => d.slug === s)) { toast('Department already exists', true); return; }
-  const limit = parseInt(document.getElementById('new-dept-limit').value) || 1;
+  const deptLimitSel = document.getElementById('new-dept-limit').value;
+  const deptLimitCustom = parseInt(document.getElementById('new-dept-limit-custom').value);
+  const limit = deptLimitSel === 'custom-new' ? (deptLimitCustom || 1) : parseInt(deptLimitSel) || 1;
   const newDept = { id: uid(), name, icon: '📊', slug: s, shareEnabled: true, lockedDeviceId: null, deviceLimit: limit, deviceIds: [] };
   depts.push(newDept);
   if (API_URL) api('POST', '/departments', newDept).catch(() => {});
@@ -918,12 +943,54 @@ function addDept() {
   renderAdmin();
   document.getElementById('new-dept-name').value = '';
   document.getElementById('new-dept-limit').value = '1';
+  document.getElementById('new-dept-limit-custom').style.display = 'none';
+  document.getElementById('new-dept-limit-custom').value = '';
   toast('Department created ✓');
 }
 
 // ══════════════════════════════
 //  DELETE DEPT
 // ══════════════════════════════
+function handleDevLimitSelect(val) {
+  const custom = document.getElementById('devlimit-custom');
+  if (val === 'custom') {
+    custom.style.display = 'block';
+    custom.focus();
+  } else {
+    custom.style.display = 'none';
+    custom.value = '';
+  }
+}
+
+function getDevLimitValue() {
+  const sel = document.getElementById('devlimit-select');
+  const custom = document.getElementById('devlimit-custom');
+  if (sel.value === 'custom') {
+    const v = parseInt(custom.value);
+    if (!v || v < 1) return null;
+    return v;
+  }
+  return parseInt(sel.value);
+}
+
+function setDevLimitSelect(val) {
+  const sel = document.getElementById('devlimit-select');
+  const custom = document.getElementById('devlimit-custom');
+  // Check if val exists in options
+  const opts = Array.from(sel.options).map(o => parseInt(o.value)).filter(v => !isNaN(v));
+  if (opts.includes(val)) {
+    sel.value = String(val);
+    custom.style.display = 'none';
+  } else if (val >= 999) {
+    sel.value = '999';
+    custom.style.display = 'none';
+  } else {
+    sel.value = 'custom';
+    custom.style.display = 'block';
+    custom.value = val;
+  }
+}
+
 function editDeviceLimit(id) {
   const dept = depts.find(d => d.id === id);
   if (!dept) return;
@@ -931,10 +998,7 @@ function editDeviceLimit(id) {
   const current = dept.deviceLimit || 1;
   document.getElementById('devlimit-desc').textContent =
     dept.name + ' — currently ' + ids.length + ' device(s) registered.';
-  const sel = document.getElementById('devlimit-select');
-  // Set closest option
-  const opts = [1,2,3,5,10,20,50,999];
-  sel.value = opts.includes(current) ? String(current) : '999';
+  setDevLimitSelect(current);
   document.getElementById('devlimit-save').setAttribute('data-id', id);
   document.getElementById('devlimit-modal').style.display = 'flex';
 }
@@ -944,7 +1008,8 @@ document.getElementById('devlimit-save').addEventListener('click', async functio
   if (!id) return;
   const dept = depts.find(d => d.id === id);
   if (!dept) return;
-  const newLimit = parseInt(document.getElementById('devlimit-select').value);
+  const newLimit = getDevLimitValue();
+  if (!newLimit) { toast('Enter a valid number', true); return; }
   this.textContent = '⏳ Saving...';
   this.disabled = true;
 
