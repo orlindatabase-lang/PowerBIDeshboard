@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Power BI Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -14,7 +14,7 @@
   --tx:#1a2e1a;--txm:#5a7a52;
   --r:10px;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-height:100vh}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gp);color:var(--tx);min-height:100vh}
 .view{display:none}.view.active{display:block}
 
 /* HEADER */
@@ -22,13 +22,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .hdr-left{display:flex;align-items:center;gap:0;white-space:nowrap}
 .hdr-pbi{display:flex;align-items:center;gap:8px;padding-right:16px;border-right:1px solid rgba(255,255,255,0.2)}
 .hdr-pbi svg{width:22px;height:22px}
-.hdr-pbi-label{font-size:13px;font-weight:600;color:rgba(255,255,255,.9)}
+.hdr-pbi-label{font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px}
 .hdr-dept{padding-left:16px;display:flex;align-items:center;gap:8px}
-.hdr-dept-name{font-size:14px;font-weight:600;color:#fff}
-.hdr-dept-pill{font-size:10px;font-weight:600;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:2px 8px;border-radius:50px;text-transform:uppercase;letter-spacing:.3px}
+.hdr-dept-name{font-size:14px;font-weight:700;color:#fff;letter-spacing:.1px}
+.hdr-dept-pill{font-size:10px;font-weight:700;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);padding:3px 9px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px}
 
 /* BUTTONS */
-.gbtn{background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.18s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.gbtn{background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.18s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;letter-spacing:.1px}
 .gbtn:hover{background:var(--gm)}
 .gbtn.sm{padding:6px 13px;font-size:12px}
 .gbtn.gray{background:#555}.gbtn.gray:hover{background:#444}
@@ -43,7 +43,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .admin-top p{font-size:12px;color:var(--txm);margin-top:3px}
 .admin-btns{display:flex;gap:8px;flex-wrap:wrap}
 .section{padding:20px 24px}
-.section-title{font-size:13px;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.section-title{font-size:11px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
 
 /* SETUP PANEL */
 .setup-panel{display:none;margin:12px 24px;background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:18px}
@@ -58,7 +58,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .add-form{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:18px;margin-bottom:20px}
 .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px}
-.fg label{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.4px}
+.fg label{font-size:10px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.8px}
 .fg input,.fg select{padding:9px 12px;border:1.5px solid var(--gb);border-radius:7px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);background:#fff;transition:.18s}
 .fg input:focus,.fg select:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(106,168,79,.14)}
 
@@ -68,7 +68,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .dc-head{background:var(--g);color:#fff;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;user-select:none}
 .dc-head-left{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;padding:2px 0}
 .dc-head-left:hover{opacity:.9}
-.dc-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin:0}
+.dc-head h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;margin:0;letter-spacing:.1px}
 .dc-badge{font-size:10px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:50px}
 .dc-actions{display:flex;gap:6px;align-items:center}
 .icn-btn{width:28px;height:28px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s}
@@ -98,7 +98,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 /* TOGGLE */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8}
-.toggle-label{font-size:11px;font-weight:600;color:var(--txm);display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.4px}
+.toggle-label{font-size:10px;font-weight:700;color:var(--txm);display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.8px}
 .sdot{width:7px;height:7px;border-radius:50%;background:#ccc}
 .sdot.on{background:#27ae60}
 .stxt.on{color:#27ae60}
@@ -111,7 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 /* LINK ROW */
 .link-row{padding:10px 16px;background:#f7fbf5;border-bottom:1px solid #edf5e8;display:flex;align-items:center;gap:8px}
-.link-tag{font-size:11px;font-family:monospace;color:var(--gm);background:var(--gp);padding:4px 8px;border-radius:4px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-tag{font-size:11px;font-family:'Inter',monospace;color:var(--gm);background:var(--gp);padding:4px 8px;border-radius:4px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
 .copy-btn{background:none;border:1.5px solid var(--gb);color:var(--txm);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.15s}
 .copy-btn:hover{background:var(--gp);color:var(--g)}
 
@@ -124,10 +124,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 /* DASH LIST */
 .dash-list{padding:10px 16px 14px}
-.dash-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:7px;border:1px solid #edf5e8;margin-bottom:6px;background:#fafffe}
+.dash-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:7px;border:1px solid #edf5e8;margin-bottom:6px;background:#fafffe;cursor:default;transition:background .15s,box-shadow .15s}
 .dash-item:last-child{margin-bottom:0}
-.dash-item-name{font-size:13px;font-weight:500;color:var(--tx)}
+.dash-item.dragging{opacity:.4;background:#e8f3e5;box-shadow:0 4px 14px rgba(31,94,26,.15)}
+.dash-item.drag-over{border-color:var(--gl);background:#f0faf0;box-shadow:0 0 0 2px rgba(106,168,79,.25)}
+.dash-item-name{font-size:13px;font-weight:600;color:var(--tx)}
 .dash-item-url{font-size:11px;color:var(--txm);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;font-family:monospace}
+.drag-handle{color:var(--txm);font-size:14px;cursor:grab;padding:0 6px 0 2px;flex-shrink:0;opacity:.5;user-select:none}
+.drag-handle:hover{opacity:1;color:var(--g)}
+.drag-handle:active{cursor:grabbing}
 .dash-del{width:24px;height:24px;border-radius:5px;border:1px solid #f5c6c2;background:none;color:var(--red);cursor:pointer;font-size:12px;flex-shrink:0}
 .dash-del:hover{background:var(--redp)}
 .dash-edit{width:24px;height:24px;border-radius:5px;border:1px solid var(--gb);background:none;color:var(--g);cursor:pointer;font-size:12px;flex-shrink:0;margin-right:4px}
@@ -158,13 +163,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 .empty p{font-size:13px}
 
 /* DEPT PUBLIC VIEW */
-.dv-sub{padding:16px 24px 0;font-size:13px;color:var(--txm)}
+.dv-sub{padding:16px 24px 0;font-size:13px;color:var(--txm);font-weight:500}
 .dash-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:16px 24px 36px}
 .dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:0;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;height:80px}
 .dash-pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gl),var(--g))}
 .dash-pub-card:hover{transform:translateY(-3px);box-shadow:0 4px 14px rgba(31,94,26,.12);border-color:var(--gl)}
-.dash-pub-card h3{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px;padding:0 10px;line-height:1.3}
-.dash-pub-card span{font-size:9px;font-weight:600;color:var(--gl);letter-spacing:.5px}
+.dash-pub-card h3{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:5px;padding:0 10px;line-height:1.3;letter-spacing:.1px}
+.dash-pub-card span{font-size:9px;font-weight:700;color:var(--gl);letter-spacing:1px}
 
 /* FULLSCREEN IFRAME */
 #iframe-view{position:fixed;inset:0;z-index:200;background:#fff}
@@ -597,6 +602,90 @@ function copyTxt(text) {
     .then(() => toast('Link copied! 📋'))
     .catch(() => { prompt('Copy this link:', text); });
 }
+// ══════════════════════════════
+//  DRAG & DROP REORDER
+// ══════════════════════════════
+let dragSrcId = null;
+let dragDeptId = null;
+
+document.addEventListener('dragstart', e => {
+  const item = e.target.closest('.dash-item');
+  if (!item) return;
+  dragSrcId = item.getAttribute('data-dash-id');
+  dragDeptId = item.getAttribute('data-dept-id');
+  item.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+});
+
+document.addEventListener('dragend', e => {
+  const item = e.target.closest('.dash-item');
+  if (!item) return;
+  item.classList.remove('dragging');
+  document.querySelectorAll('.dash-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+});
+
+document.addEventListener('dragover', e => {
+  e.preventDefault();
+  const item = e.target.closest('.dash-item');
+  if (!item || item.getAttribute('data-dash-id') === dragSrcId) return;
+  document.querySelectorAll('.dash-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+  item.classList.add('drag-over');
+  e.dataTransfer.dropEffect = 'move';
+});
+
+document.addEventListener('dragleave', e => {
+  const item = e.target.closest('.dash-item');
+  if (item) item.classList.remove('drag-over');
+});
+
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  const targetItem = e.target.closest('.dash-item');
+  if (!targetItem) return;
+  const targetId = targetItem.getAttribute('data-dash-id');
+  if (!dragSrcId || dragSrcId === targetId) return;
+  targetItem.classList.remove('drag-over');
+
+  // Reorder dashes array
+  const deptDashes = dashes.filter(d => d.deptId === dragDeptId);
+  const otherDashes = dashes.filter(d => d.deptId !== dragDeptId);
+
+  const srcIdx = deptDashes.findIndex(d => d.id === dragSrcId);
+  const tgtIdx = deptDashes.findIndex(d => d.id === targetId);
+  if (srcIdx === -1 || tgtIdx === -1) return;
+
+  // Move src to target position
+  const [moved] = deptDashes.splice(srcIdx, 1);
+  deptDashes.splice(tgtIdx, 0, moved);
+
+  dashes = [...otherDashes, ...deptDashes];
+  localSave();
+
+  // Re-render just the dash list (not full admin to preserve open state)
+  const list = document.getElementById('dl-' + dragDeptId);
+  if (list) {
+    const dept = depts.find(d => d.id === dragDeptId);
+    const myDashes = dashes.filter(d => d.deptId === dragDeptId);
+    list.innerHTML = myDashes.length === 0
+      ? '<div class="no-dash">No dashboards assigned yet</div>'
+      : myDashes.map(d => `
+        <div class="dash-item" draggable="true" data-dash-id="${d.id}" data-dept-id="${dragDeptId}">
+          <span class="drag-handle" title="Drag to reorder">⠿</span>
+          <div style="overflow:hidden;flex:1">
+            <div class="dash-item-name">${esc(d.name)}</div>
+            <div class="dash-item-url">${esc(d.link)}</div>
+          </div>
+          <div class="dash-item-btns">
+            <button class="dash-edit" onclick="editDash('${d.id}')" title="Edit">✎</button>
+            <button class="dash-del" onclick="deleteDash('${d.id}')" title="Remove">✕</button>
+          </div>
+        </div>`).join('');
+  }
+  toast('↕ Order saved ✓');
+  dragSrcId = null;
+  dragDeptId = null;
+});
+
 function filterDepts(query) {
   const q = query.toLowerCase().trim();
   const cards = document.querySelectorAll('#dept-grid .dept-card');
@@ -721,13 +810,29 @@ function renderAdmin() {
     const ids = parseDeviceIds(dept);
     const count = ids.length;
 
+    const limitLabel = limit >= 999 ? '∞' : limit;
     let deviceHtml = '';
     if (count === 0) {
-      deviceHtml = `<div class="device-free">⚪ No devices registered — first ${limit} opener(s) get access</div>`;
+      deviceHtml = `<div class="device-free" style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #edf5e8">
+        <span>⚪ No devices — first <strong>${limitLabel}</strong> opener(s) get access</span>
+        <button class="reset-btn" onclick="editDeviceLimit('${dept.id}')" style="border-color:var(--gb);color:var(--g)">✎ Edit Limit</button>
+      </div>`;
     } else if (count >= limit) {
-      deviceHtml = `<div class="device-row"><div class="device-info">🔒 ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+      deviceHtml = `<div class="device-row">
+        <div class="device-info">🔒 ${count}/${limitLabel} devices</div>
+        <div style="display:flex;gap:6px">
+          <button class="reset-btn" onclick="editDeviceLimit('${dept.id}')" style="border-color:var(--gb);color:var(--g)">✎ Limit: ${limitLabel}</button>
+          <button class="reset-btn" onclick="resetDevice('${dept.id}')">↺ Reset</button>
+        </div>
+      </div>`;
     } else {
-      deviceHtml = `<div class="device-row" style="background:#f0fbf0"><div class="device-info" style="color:#27ae60">🟢 ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+      deviceHtml = `<div class="device-row" style="background:#f0fbf0">
+        <div class="device-info" style="color:#27ae60">🟢 ${count}/${limitLabel} devices</div>
+        <div style="display:flex;gap:6px">
+          <button class="reset-btn" onclick="editDeviceLimit('${dept.id}')" style="border-color:var(--gb);color:var(--g)">✎ Limit: ${limitLabel}</button>
+          <button class="reset-btn" onclick="resetDevice('${dept.id}')">↺ Reset</button>
+        </div>
+      </div>`;
     }
 
     const card = document.createElement('div');
@@ -766,7 +871,8 @@ function renderAdmin() {
         ${myDashes.length === 0
           ? '<div class="no-dash">No dashboards assigned yet</div>'
           : myDashes.map(d => `
-            <div class="dash-item">
+            <div class="dash-item" draggable="true" data-dash-id="${d.id}" data-dept-id="${dept.id}">
+              <span class="drag-handle" title="Drag to reorder">⠿</span>
               <div style="overflow:hidden;flex:1">
                 <div class="dash-item-name">${esc(d.name)}</div>
                 <div class="dash-item-url">${esc(d.link)}</div>
