@@ -557,7 +557,7 @@ function renderAdmin() {
       <div class="add-dash-form" id="adf-${dept.id}">
         <div class="arow">
           <input type="text" placeholder="Dashboard name" id="dn-${dept.id}" />
-          <input type="text" placeholder="Power BI link (https://...)" id="dl-${dept.id}" style="flex:2" />
+          <input type="text" placeholder="Power BI link (https://...)" id="dlink-${dept.id}" style="flex:2" />
           <button class="gbtn sm" onclick="addDash('${dept.id}')">Add</button>
         </div>
       </div>
@@ -651,7 +651,7 @@ function toggleAddDash(deptId) {
 
 function addDash(deptId) {
   const name = document.getElementById('dn-' + deptId).value.trim();
-  const link = document.getElementById('dl-' + deptId).value.trim();
+  const link = document.getElementById('dlink-' + deptId).value.trim();
   if (!name || !link) { toast('Fill both name and link', true); return; }
   const newDash = { id: uid(), name, deptId, link };
   dashes.push(newDash);
@@ -664,6 +664,11 @@ function addDash(deptId) {
   }
   localSave();
   renderAdmin();
+  // Clear inputs
+  const nameEl = document.getElementById('dn-' + deptId);
+  const linkEl = document.getElementById('dlink-' + deptId);
+  if (nameEl) nameEl.value = '';
+  if (linkEl) linkEl.value = '';
 }
 
 // ══════════════════════════════
