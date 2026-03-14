@@ -1519,9 +1519,7 @@ let pinLength = 4;
 let cachedPin = null;
 
 async function getPin() {
-  // Use cached pin if available
-  if (cachedPin) return cachedPin;
-  // Try BigQuery first
+  // ALWAYS fetch fresh from BigQuery — never use cache for security
   if (API_URL) {
     try {
       const r = await api('GET', '/settings/admin_pin');
@@ -1530,24 +1528,29 @@ async function getPin() {
         localStorage.setItem('pbi_admin_pin', r.value);
         return r.value;
       }
-    } catch(e) {}
+    } catch(e) {
+      console.warn('Could not fetch PIN from cloud, using local cache');
+    }
   }
-  // Fallback to localStorage
+  // Fallback to localStorage only if cloud fails
   const local = localStorage.getItem('pbi_admin_pin');
   cachedPin = local || DEFAULT_PIN;
   return cachedPin;
 }
 
 async function savePin(pin) {
-  cachedPin = pin;
   localStorage.setItem('pbi_admin_pin', pin);
   // Save to BigQuery so all devices share same PIN
   if (API_URL) {
     try {
       await api('PUT', '/settings/admin_pin', { value: pin });
+      cachedPin = null; // Reset cache so next login fetches fresh from BigQuery
     } catch(e) {
       console.warn('Could not save PIN to cloud', e);
+      cachedPin = pin;
     }
+  } else {
+    cachedPin = pin;
   }
 }
 
