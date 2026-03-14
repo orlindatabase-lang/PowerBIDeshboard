@@ -626,22 +626,24 @@ function deleteDash(id) {
 // ═══════════════════════════
 //  DEPT PUBLIC VIEW
 // ═══════════════════════════
-function openDeptView(s) {
+function openDeptView(s, skipDeviceCheck) {
   const dept = depts.find(d=>d.slug===s);
   if (!dept) { show('notfound-view'); return; }
-  if (!dept.shareEnabled) { show('restricted-view'); return; }
+  if (!dept.shareEnabled && !skipDeviceCheck) { show('restricted-view'); return; }
 
-  // Device lock check — skip if opened directly (no ?dept param would have loaded admin)
-  const myDeviceId = getDeviceId();
-  if (!dept.lockedDeviceId) {
-    // First device — register it
-    dept.lockedDeviceId = myDeviceId;
-    save();
-  } else if (dept.lockedDeviceId !== myDeviceId) {
-    // Different device — block
-    show('blocked-view');
-    return;
+  // Device lock check — skip if admin is previewing
+  if (!skipDeviceCheck) {
+    const myDeviceId = getDeviceId();
+    if (!dept.lockedDeviceId) {
+      dept.lockedDeviceId = myDeviceId;
+      if (API_URL) { apiPut('/departments/' + dept.id, { lockedDeviceId: myDeviceId }).catch(()=>{}); }
+      save();
+    } else if (dept.lockedDeviceId !== myDeviceId) {
+      show('blocked-view');
+      return;
+    }
   }
+
   const myDashes = dashes.filter(d=>d.deptId===dept.id);
 
   currentDeptSlug = s;
@@ -725,7 +727,9 @@ document.getElementById('iframe-back').addEventListener('click', () => {
   url.searchParams.delete('dash');
   window.history.replaceState({}, '', url.toString());
   if (currentDeptSlug) {
-    openDeptView(currentDeptSlug);
+    // Check if we came from admin
+    const fromAdmin = sessionStorage.getItem('pbi_from_admin') === 'true';
+    openDeptView(currentDeptSlug, fromAdmin);
   } else {
     show('dept-view');
   }
@@ -883,9 +887,11 @@ const deptParam = params.get('dept');
 const dashParam = params.get('dash');
 if (adminParam === 'true') {
   // Admin portal — open from any device, no lock check
+  sessionStorage.setItem('pbi_from_admin', 'true');
   renderAdmin();
   show('admin-view');
 } else if (deptParam && dashParam) {
+  sessionStorage.setItem('pbi_from_admin', 'false');
   // Restore directly to dashboard iframe
   const dept = depts.find(d => d.slug === deptParam);
   if (!dept) { show('notfound-view'); }
@@ -917,7 +923,8 @@ if (adminParam === 'true') {
     }
   }
 } else if (deptParam) {
-  openDeptView(deptParam);
+  sessionStorage.setItem('pbi_from_admin', 'false');
+  openDeptView(deptParam, false);
 } else {
   renderAdmin();
   show('admin-view');
