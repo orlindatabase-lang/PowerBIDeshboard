@@ -132,12 +132,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 /* FULLSCREEN IFRAME */
 #iframe-view{position:fixed;inset:0;z-index:200;background:#fff}
-#iframe-view .if-bar{position:absolute;top:0;left:0;right:0;height:50px;background:var(--g);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:201}
-#iframe-view .if-bar button{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
-#iframe-view .if-bar button:hover{background:rgba(255,255,255,.25)}
-#iframe-view .if-bar .if-title{color:#fff;font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#iframe-view .if-bar .if-refresh{width:36px;height:36px;border-radius:50%!important;padding:0!important;display:flex;align-items:center;justify-content:center;font-size:18px}
-#dashFrame{position:absolute;top:50px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 50px);border:none}
+#dashFrame{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+#iframe-float-btns{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;gap:10px}
+#iframe-float-btns button{background:var(--g);color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,0.3);transition:.2s;display:flex;align-items:center;gap:6px}
+#iframe-float-btns button:hover{background:var(--gm);transform:translateY(-2px)}
+#btn-back{padding:10px 20px}
+#btn-refresh{width:44px;height:44px;border-radius:50%!important;padding:0!important;justify-content:center;font-size:20px}
 
 /* STATIC VIEWS */
 .static-view{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px}
@@ -269,12 +269,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
-  <div class="if-bar">
-    <button id="btn-back">← Back</button>
-    <span class="if-title" id="if-title"></span>
-    <button class="if-refresh" id="btn-refresh" title="Refresh">↻</button>
-  </div>
   <iframe id="dashFrame"></iframe>
+  <div id="iframe-float-btns">
+    <button id="btn-back">← Back</button>
+    <button id="btn-refresh" title="Refresh">↻</button>
+  </div>
 </div>
 
 <!-- ══ NOT FOUND ══ -->
@@ -697,13 +696,23 @@ function openDeptView(slug, skipDeviceCheck) {
   if (!skipDeviceCheck) {
     const myId = getDeviceId();
     const limit = dept.deviceLimit || 1;
-    if (!dept.deviceIds) dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
-    const ids = dept.deviceIds;
+    // Parse deviceIds — may be stored as JSON string from BigQuery
+    let ids = [];
+    if (Array.isArray(dept.deviceIds) && dept.deviceIds.length > 0) {
+      ids = dept.deviceIds;
+    } else if (typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.startsWith('[')) {
+      try { ids = JSON.parse(dept.lockedDeviceId); } catch(e) { ids = []; }
+    } else if (dept.lockedDeviceId) {
+      ids = [dept.lockedDeviceId];
+    }
+    dept.deviceIds = ids;
+
     if (ids.includes(myId)) {
       // already registered — ok
     } else if (ids.length < limit) {
       ids.push(myId);
-      dept.lockedDeviceId = ids[0];
+      dept.lockedDeviceId = JSON.stringify(ids);
+      dept.deviceIds = ids;
       localSave();
       if (API_URL) api('PUT', '/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids) }).catch(() => {});
     } else {
@@ -746,8 +755,6 @@ function openIframe(name, link, dashId) {
   sessionStorage.setItem('pbi_link', link);
   sessionStorage.setItem('pbi_name', name);
   sessionStorage.setItem('pbi_dash', dashId || '');
-
-  document.getElementById('if-title').textContent = name;
 
   const url = new URL(window.location.href);
   url.searchParams.set('dept', currentDeptSlug);
@@ -813,12 +820,20 @@ async function init() {
     if (!dept.shareEnabled) { show('restricted-view'); return; }
     const myId = getDeviceId();
     const limit = dept.deviceLimit || 1;
-    if (!dept.deviceIds) dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
-    const ids = dept.deviceIds;
+    let ids = [];
+    if (Array.isArray(dept.deviceIds) && dept.deviceIds.length > 0) {
+      ids = dept.deviceIds;
+    } else if (typeof dept.lockedDeviceId === 'string' && dept.lockedDeviceId.startsWith('[')) {
+      try { ids = JSON.parse(dept.lockedDeviceId); } catch(e) { ids = []; }
+    } else if (dept.lockedDeviceId) {
+      ids = [dept.lockedDeviceId];
+    }
+    dept.deviceIds = ids;
     if (!ids.includes(myId) && ids.length >= limit) { show('blocked-view'); return; }
     if (!ids.includes(myId)) {
       ids.push(myId);
-      dept.lockedDeviceId = ids[0];
+      dept.lockedDeviceId = JSON.stringify(ids);
+      dept.deviceIds = ids;
       localSave();
       if (API_URL) api('PUT', '/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids) }).catch(() => {});
     }
