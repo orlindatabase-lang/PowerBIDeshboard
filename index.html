@@ -169,10 +169,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 /* FULLSCREEN IFRAME */
 #iframe-view{position:fixed;inset:0;z-index:200;background:#fff}
 #dashFrame{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-#btn-back{position:fixed;top:12px;left:12px;z-index:9999;background:rgba(31,94,26,0.85);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.25);display:flex;align-items:center;gap:4px;transition:.2s;backdrop-filter:blur(4px)}
-#btn-back:hover{background:var(--g);transform:translateY(-1px)}
-#btn-refresh{position:fixed;top:16px;right:16px;z-index:9999;background:var(--g);color:#fff;border:none;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,0.3);transition:.2s}
-#btn-refresh:hover{background:var(--gm);transform:translateY(-1px)}
+#btn-back,#btn-refresh{position:fixed;top:14px;z-index:9999;background:rgba(31,94,26,0.88);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.28);transition:.2s;backdrop-filter:blur(6px)}
+#btn-back{left:14px}
+#btn-refresh{right:14px}
+#btn-back:hover,#btn-refresh:hover{background:var(--g);transform:scale(1.08)}
 @keyframes spinning{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 #btn-refresh.refreshing{animation:spinning .7s linear infinite}
 
@@ -264,7 +264,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
   <!-- ADD DEPARTMENT -->
   <div class="section">
-    <div class="section-title">➕ New Department</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="section-title" style="margin-bottom:0">➕ New Department</div>
+      <div style="position:relative;display:flex;align-items:center">
+        <span style="position:absolute;left:10px;color:var(--txm);font-size:14px;pointer-events:none">🔍</span>
+        <input type="text" id="dept-search" placeholder="Search departments…"
+          oninput="filterDepts(this.value)"
+          style="padding:8px 12px 8px 32px;border:1.5px solid var(--gb);border-radius:8px;font-size:13px;outline:none;font-family:inherit;color:var(--tx);background:#fff;width:220px;transition:.18s"
+          onfocus="this.style.borderColor='var(--gl)';this.style.boxShadow='0 0 0 3px rgba(106,168,79,.14)'"
+          onblur="this.style.borderColor='var(--gb)';this.style.boxShadow='none'"
+        />
+      </div>
+    </div>
     <div class="add-form">
       <div class="form-row">
         <div class="fg">
@@ -308,7 +319,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
-  <button id="btn-back">← Back</button>
+  <button id="btn-back" title="Back">←</button>
   <button id="btn-refresh" title="Refresh dashboard">↻</button>
   <iframe id="dashFrame"></iframe>
 </div>
@@ -506,12 +517,15 @@ function confirm2(title, body, cb) {
   document.getElementById('confirm-overlay').classList.add('open');
 }
 // Rename modal close
-document.getElementById('rename-cancel').onclick = () => {
+function closeRenameModal() {
   document.getElementById('rename-modal').style.display = 'none';
-};
+  document.getElementById('rename-save').textContent = 'Save Name';
+  document.getElementById('rename-save').disabled = false;
+}
+document.getElementById('rename-cancel').onclick = closeRenameModal;
 document.getElementById('rename-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('rename-save').click();
-  if (e.key === 'Escape') document.getElementById('rename-modal').style.display = 'none';
+  if (e.key === 'Escape') closeRenameModal();
 });
 
 // Dup modal close
@@ -558,6 +572,28 @@ function copyTxt(text) {
     .then(() => toast('Link copied! 📋'))
     .catch(() => { prompt('Copy this link:', text); });
 }
+function filterDepts(query) {
+  const q = query.toLowerCase().trim();
+  const cards = document.querySelectorAll('#dept-grid .dept-card');
+  let found = 0;
+  cards.forEach(card => {
+    const name = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+    const match = !q || name.includes(q);
+    card.style.display = match ? '' : 'none';
+    if (match) found++;
+  });
+  // Show no results message
+  let noRes = document.getElementById('no-search-result');
+  if (!noRes) {
+    noRes = document.createElement('div');
+    noRes.id = 'no-search-result';
+    noRes.style.cssText = 'grid-column:1/-1;text-align:center;padding:32px;color:var(--txm);font-size:13px;display:none';
+    noRes.innerHTML = '🔍 No departments found';
+    document.getElementById('dept-grid').appendChild(noRes);
+  }
+  noRes.style.display = (found === 0 && q) ? 'block' : 'none';
+}
+
 function copyAdminLink() {
   copyTxt(window.location.href.split('?')[0] + '?admin=true');
 }
@@ -639,6 +675,8 @@ async function syncFromCloud() {
 // ══════════════════════════════
 function renderAdmin() {
   updateBadge();
+  // Keep search query if active
+  const searchVal = document.getElementById('dept-search') ? document.getElementById('dept-search').value : '';
   const grid = document.getElementById('dept-grid');
   grid.innerHTML = '';
   if (depts.length === 0) {
@@ -720,6 +758,8 @@ function renderAdmin() {
     `;
     grid.appendChild(card);
   });
+  // Re-apply search filter if active
+  if (searchVal) filterDepts(searchVal);
 }
 
 // ══════════════════════════════
@@ -749,27 +789,49 @@ function renameDept(id) {
   if (!dept) return;
   const input = document.getElementById('rename-input');
   input.value = dept.name;
+
+  // Store dept id on save button for reference
+  document.getElementById('rename-save').setAttribute('data-id', id);
   document.getElementById('rename-modal').style.display = 'flex';
   setTimeout(() => { input.focus(); input.select(); }, 100);
-
-  document.getElementById('rename-save').onclick = async function() {
-    const newName = input.value.trim();
-    if (!newName) { toast('Enter a name', true); return; }
-    const newSlug = slugify(newName);
-    if (newSlug !== dept.slug && depts.find(d => d.slug === newSlug)) {
-      toast('Name already exists', true); return;
-    }
-    dept.name = newName;
-    dept.slug = newSlug;
-    if (API_URL) {
-      try { await api('PUT', '/departments/' + id, { name: newName }); } catch(e) {}
-    }
-    localSave();
-    renderAdmin();
-    document.getElementById('rename-modal').style.display = 'none';
-    toast('Department renamed ✓');
-  };
 }
+
+document.getElementById('rename-save').addEventListener('click', async function() {
+  const id = this.getAttribute('data-id');
+  if (!id) return;
+  const dept = depts.find(d => d.id === id);
+  if (!dept) return;
+
+  const newName = document.getElementById('rename-input').value.trim();
+  if (!newName) { toast('Enter a name', true); return; }
+
+  const newSlug = slugify(newName);
+  if (newSlug !== dept.slug && depts.find(d => d.slug === newSlug)) {
+    toast('This name already exists', true); return;
+  }
+
+  this.textContent = '⏳ Saving...';
+  this.disabled = true;
+
+  const oldSlug = dept.slug;
+  dept.name = newName;
+  dept.slug = newSlug;
+
+  if (API_URL) {
+    try {
+      await api('PUT', '/departments/' + id, { name: newName });
+    } catch(e) {
+      toast('Saved locally, cloud sync failed', true);
+    }
+  }
+
+  localSave();
+  renderAdmin();
+  document.getElementById('rename-modal').style.display = 'none';
+  this.textContent = 'Save Name';
+  this.disabled = false;
+  toast('Department renamed to ' + newName + ' ✓');
+});
 
 function duplicateDept(id) {
   const dept = depts.find(d => d.id === id);
@@ -793,6 +855,7 @@ function duplicateDept(id) {
   document.getElementById('dup-modal').classList.add('open');
   document.getElementById('dup-name').focus();
 
+  document.getElementById('dup-save').setAttribute('data-dept-id', id);
   document.getElementById('dup-save').onclick = async function() {
     const newName = document.getElementById('dup-name').value.trim();
     const newLimit = parseInt(document.getElementById('dup-limit').value) || 1;
