@@ -261,12 +261,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
-  <button id="iframe-back" onclick="" style="position:fixed;top:16px;left:16px;z-index:9999;background:var(--g);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(0,0,0,0.25)">← Back</button>
-  <button id="dash-refresh-btn" title="Reload dashboard" onclick="refreshDashboard()" style="position:fixed;top:16px;right:16px;z-index:9999;background:var(--g);color:#fff;border:none;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.25);transition:.2s">↻</button>
-  <div id="dash-refreshing" style="display:none;position:fixed;top:16px;right:16px;z-index:9999;background:var(--g);color:#fff;width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.25)">
-    <span id="spin-icon" style="display:inline-block;animation:spin .7s linear infinite">↻</span>
+  <div style="height:52px;background:var(--g);display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:50">
+    <button id="iframe-back" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">← Back</button>
+    <span id="if-title" style="color:#fff;font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+    <button onclick="refreshDashboard()" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center" title="Refresh">
+      <span id="spin-icon" style="display:inline-block">↻</span>
+    </button>
+    <button onclick="openInNewTab()" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" title="Open in new tab">↗ Open</button>
   </div>
-  <iframe id="dashFrame" style="width:100vw;height:100vh;border:none;display:block"></iframe>
+  <iframe id="dashFrame" style="width:100%;height:calc(100vh - 52px);border:none;display:block"></iframe>
 </div>
 
 <!-- ══ NOT FOUND VIEW ══ -->
@@ -677,44 +680,43 @@ function openDeptView(s, skipDeviceCheck) {
 let currentDeptSlug = '';
 let currentDashId = '';
 
+function openInNewTab() {
+  const src = document.getElementById('dashFrame').src;
+  if (src) window.open(src, '_blank');
+}
+
 function openIframe(name, link, dashId) {
   currentDashId = dashId || '';
-  document.getElementById('dashFrame').src = link;
   // Save link in sessionStorage so refresh can reload it
   sessionStorage.setItem('pbi_active_link', link);
   sessionStorage.setItem('pbi_active_name', name);
+  // Set title
+  const titleEl = document.getElementById('if-title');
+  if (titleEl) titleEl.textContent = name;
   // Keep both dept and dash in URL so refresh restores correctly
   const url = new URL(window.location.href);
   url.searchParams.set('dept', currentDeptSlug);
   if (dashId) url.searchParams.set('dash', dashId);
   window.history.replaceState({}, '', url.toString());
   show('iframe-view');
+  // Set iframe src AFTER showing view to avoid redirect issues
+  setTimeout(() => {
+    document.getElementById('dashFrame').src = link;
+  }, 50);
 }
 
 function refreshDashboard() {
-  const btn = document.getElementById('dash-refresh-btn');
-  const spinning = document.getElementById('dash-refreshing');
   const frame = document.getElementById('dashFrame');
+  const spinIcon = document.getElementById('spin-icon');
   const currentSrc = frame.src;
   if (!currentSrc) return;
-
-  // Show spinner, hide button
-  btn.style.display = 'none';
-  spinning.style.display = 'flex';
-
-  // Reload iframe by resetting src
+  if (spinIcon) spinIcon.style.animation = 'spin .7s linear infinite';
   frame.src = '';
   setTimeout(() => {
     frame.src = currentSrc;
+    frame.onload = () => { if (spinIcon) spinIcon.style.animation = ''; };
+    setTimeout(() => { if (spinIcon) spinIcon.style.animation = ''; }, 8000);
   }, 150);
-
-  // Restore button after load or timeout
-  const restore = () => {
-    spinning.style.display = 'none';
-    btn.style.display = 'flex';
-  };
-  frame.onload = restore;
-  setTimeout(restore, 8000); // fallback
 }
 
 document.getElementById('iframe-back').addEventListener('click', () => {
@@ -722,14 +724,11 @@ document.getElementById('iframe-back').addEventListener('click', () => {
   currentDashId = '';
   sessionStorage.removeItem('pbi_active_link');
   sessionStorage.removeItem('pbi_active_name');
-  // Remove dash param, keep dept param
   const url = new URL(window.location.href);
   url.searchParams.delete('dash');
   window.history.replaceState({}, '', url.toString());
   if (currentDeptSlug) {
-    // Check if we came from admin
-    const fromAdmin = sessionStorage.getItem('pbi_from_admin') === 'true';
-    openDeptView(currentDeptSlug, fromAdmin);
+    openDeptView(currentDeptSlug, false);
   } else {
     show('dept-view');
   }
