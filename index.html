@@ -208,12 +208,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
     <div class="admin-btns">
       <button class="gbtn" onclick="copyAdminLink()">📋 Copy Admin Link</button>
       <button class="gbtn teal" onclick="syncFromCloud()">↻ Sync</button>
+      <button class="gbtn" onclick="expandAll()" style="background:#2e7d32">▼ Expand All</button>
+      <button class="gbtn" onclick="collapseAll()" style="background:#555">▲ Collapse All</button>
       <button class="gbtn gray" onclick="toggleSetup()">⚙ Cloud Setup</button>
     </div>
   </div>
 
   <!-- SETUP PANEL -->
-  <div class="setup-panel" id="setup-panel">
+  <div class="setup-panel" id="setup-panel" style="display:none">
     <span id="api-badge" class="api-badge">⚪ Not connected</span>
     <h4>☁ GCP Cloud Run API Setup</h4>
     <p>Paste your Cloud Run URL — all devices share the same BigQuery data</p>
@@ -443,6 +445,7 @@ function toggleSetup() {
   const p = document.getElementById('setup-panel');
   const isOpen = p.style.display === 'block';
   p.style.display = isOpen ? 'none' : 'block';
+  document.querySelector('[onclick="toggleSetup()"]').textContent = isOpen ? '⚙ Cloud Setup' : '✕ Close Setup';
   if (!isOpen) {
     document.getElementById('setup-url').value = API_URL || '';
     updateBadge();
@@ -627,6 +630,14 @@ function deleteDept(id) {
 // ══════════════════════════════
 //  TOGGLE SHARE
 // ══════════════════════════════
+function expandAll() {
+  document.querySelectorAll('.dept-card').forEach(card => card.classList.remove('collapsed'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.dept-card').forEach(card => card.classList.add('collapsed'));
+}
+
 function toggleCollapse(id) {
   const head = document.getElementById('dch-' + id);
   if (!head) return;
