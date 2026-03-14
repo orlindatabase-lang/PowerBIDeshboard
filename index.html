@@ -224,6 +224,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
           <label>Department Name</label>
           <input type="text" id="new-dept-name" placeholder="e.g. Finance, HR, Sales…" />
         </div>
+        <div class="fg" style="max-width:180px">
+          <label>Device Limit</label>
+          <select id="new-dept-devices">
+            <option value="1">1 Device (default)</option>
+            <option value="2">2 Devices</option>
+            <option value="3">3 Devices</option>
+            <option value="5">5 Devices</option>
+            <option value="10">10 Devices</option>
+            <option value="999">Unlimited</option>
+          </select>
+        </div>
         <button class="gbtn" onclick="addDept()" style="margin-bottom:1px">Create Department</button>
       </div>
     </div>
@@ -261,15 +272,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
-  <div style="height:52px;background:var(--g);display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:50">
-    <button id="iframe-back" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">← Back</button>
-    <span id="if-title" style="color:#fff;font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-    <button onclick="refreshDashboard()" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center" title="Refresh">
-      <span id="spin-icon" style="display:inline-block">↻</span>
+  <!-- Floating buttons - appear on hover -->
+  <div id="iframe-controls" style="position:fixed;top:12px;left:12px;z-index:9999;display:flex;gap:8px;opacity:0;transition:opacity .3s"
+    onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
+    <button id="iframe-back" style="background:var(--g);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(0,0,0,0.3)">← Back</button>
+    <button onclick="refreshDashboard()" style="background:var(--g);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.3)" title="Refresh">
+      <span id="spin-icon">↻</span>
     </button>
-    <button onclick="openInNewTab()" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.4);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit" title="Open in new tab">↗ Open</button>
   </div>
-  <iframe id="dashFrame" style="width:100%;height:calc(100vh - 52px);border:none;display:block"></iframe>
+  <!-- Show controls hint on load -->
+  <div id="iframe-hint" style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(0,0,0,0.6);color:#fff;padding:6px 16px;border-radius:50px;font-size:12px;font-family:'DM Sans',sans-serif;pointer-events:none;transition:opacity .5s">
+    Move mouse to top-left for controls
+  </div>
+  <iframe id="dashFrame" style="width:100vw;height:100vh;border:none;display:block"></iframe>
 </div>
 
 <!-- ══ NOT FOUND VIEW ══ -->
@@ -372,7 +387,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 // ═══════════════════════════
 //  DATA
 // ═══════════════════════════
-let depts = [];   // {id, name, icon, slug, shareEnabled, lockedDeviceId}
+let depts = [];   // {id, name, icon, slug, shareEnabled, lockedDeviceId, deviceLimit, deviceIds}
 let dashes = [];  // {id, name, deptId, link}
 
 // ═══════════════════════════
@@ -490,13 +505,14 @@ function renderAdmin() {
         <span class="link-tag" title="${esc(link)}">${esc(link)}</span>
         <button class="copy-btn" onclick="copyTxt('${esc(link)}')" ${dept.shareEnabled?'':'style="opacity:.45;pointer-events:none"'}>📋 Copy Link</button>
       </div>
-      ${dept.lockedDeviceId
-        ? `<div class="device-row">
-            <div class="device-info"><span class="di">🔒</span> Locked to 1 device</div>
-            <button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset Device</button>
-           </div>`
-        : `<div class="device-free">⚪ No device registered yet — first opener gets access</div>`
-      }
+      ${(()=>{
+        const limit = dept.deviceLimit || 1;
+        const ids = dept.deviceIds || (dept.lockedDeviceId ? [dept.lockedDeviceId] : []);
+        const count = ids.length;
+        if (count === 0) return `<div class="device-free">⚪ No devices registered — first ${limit} opener(s) get access</div>`;
+        if (count >= limit) return `<div class="device-row"><div class="device-info"><span class="di">🔒</span> ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+        return `<div class="device-row" style="background:#f0fbf0"><div class="device-info" style="color:#27ae60"><span class="di">🟢</span> ${count}/${limit} devices registered</div><button class="reset-btn" onclick="resetDevice('${dept.id}')">Reset All</button></div>`;
+      })()}
       <div class="dash-list" id="dl-${dept.id}">
         ${myDashes.length === 0
           ? `<div class="no-dash">No dashboards assigned yet</div>`
@@ -531,11 +547,13 @@ function addDept() {
   if (!name) { toast('Enter a department name', true); return; }
   const s = slug(name);
   if (depts.find(d=>d.slug===s)) { toast('Department name already exists', true); return; }
-  const newDept = { id:uid(), name, icon, slug:s, shareEnabled:true, lockedDeviceId:null };
+  const deviceLimit = parseInt(document.getElementById('new-dept-devices').value) || 1;
+  const newDept = { id:uid(), name, icon, slug:s, shareEnabled:true, lockedDeviceId:null, deviceLimit, deviceIds:[] };
   depts.push(newDept);
   if (API_URL) { apiPost('/departments', newDept).catch(e => toast('Cloud sync failed', true)); }
   save(); renderAdmin();
   document.getElementById('new-dept-name').value='';
+  document.getElementById('new-dept-devices').value='1';
   toast('Department created ✓');
 }
 
@@ -568,9 +586,10 @@ function resetDevice(id) {
     `Reset device lock for <strong>${esc(dept.name)}</strong>?<br><br>The next device that opens this link will become the new authorised device.`,
     () => {
       dept.lockedDeviceId = null;
+      dept.deviceIds = [];
       if (API_URL) { apiPut('/departments/' + id, { lockedDeviceId: null }).catch(()=>{}); }
       save(); renderAdmin();
-      toast('Device lock reset — next opener gets access');
+      toast('Device lock reset — next ' + (dept.deviceLimit||1) + ' opener(s) get access');
     }
   );
 }
@@ -634,14 +653,29 @@ function openDeptView(s, skipDeviceCheck) {
   if (!dept) { show('notfound-view'); return; }
   if (!dept.shareEnabled && !skipDeviceCheck) { show('restricted-view'); return; }
 
-  // Device lock check — skip if admin is previewing
+  // Device limit check — skip if admin is previewing
   if (!skipDeviceCheck) {
     const myDeviceId = getDeviceId();
-    if (!dept.lockedDeviceId) {
-      dept.lockedDeviceId = myDeviceId;
-      if (API_URL) { apiPut('/departments/' + dept.id, { lockedDeviceId: myDeviceId }).catch(()=>{}); }
+    const limit = dept.deviceLimit || 1;
+    // Migrate old lockedDeviceId to deviceIds array
+    if (!dept.deviceIds) {
+      dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
+    }
+    const ids = dept.deviceIds;
+    if (ids.includes(myDeviceId)) {
+      // Already registered — allow
+    } else if (ids.length < limit) {
+      // Under limit — register this device
+      ids.push(myDeviceId);
+      dept.lockedDeviceId = ids[0];
+      if (API_URL) {
+        apiPut('/departments/' + dept.id, {
+          lockedDeviceId: JSON.stringify(ids)
+        }).catch(()=>{});
+      }
       save();
-    } else if (dept.lockedDeviceId !== myDeviceId) {
+    } else {
+      // Over limit — block
       show('blocked-view');
       return;
     }
@@ -707,6 +741,22 @@ function getEmbedUrl(link) {
 }
 
 function openIframe(name, link, dashId) {
+  // Auto-hide hint after 3 seconds
+  const hint = document.getElementById('iframe-hint');
+  const controls = document.getElementById('iframe-controls');
+  if (hint) {
+    hint.style.opacity = '1';
+    setTimeout(() => { hint.style.opacity = '0'; }, 3000);
+  }
+  // Show controls on mouse move near top-left
+  document.addEventListener('mousemove', function showCtrl(e) {
+    if (!controls) return;
+    if (e.clientY < 80 && e.clientX < 200) {
+      controls.style.opacity = '1';
+    } else {
+      controls.style.opacity = '0';
+    }
+  });
   currentDashId = dashId || '';
   const embedUrl = getEmbedUrl(link);
   // Save link in sessionStorage so refresh can reload it
@@ -919,11 +969,17 @@ if (adminParam === 'true') {
   else if (!dept.shareEnabled) { show('restricted-view'); }
   else {
     const myDeviceId = getDeviceId();
-    if (!dept.lockedDeviceId) {
-      dept.lockedDeviceId = myDeviceId;
-      if (API_URL) { apiPut('/departments/' + dept.id, { lockedDeviceId: myDeviceId }).catch(()=>{}); }
+    const limit2 = dept.deviceLimit || 1;
+    if (!dept.deviceIds) dept.deviceIds = dept.lockedDeviceId ? [dept.lockedDeviceId] : [];
+    const ids2 = dept.deviceIds;
+    if (ids2.includes(myDeviceId)) {
+      // already registered
+    } else if (ids2.length < limit2) {
+      ids2.push(myDeviceId);
+      dept.lockedDeviceId = ids2[0];
+      if (API_URL) { apiPut('/departments/' + dept.id, { lockedDeviceId: JSON.stringify(ids2) }).catch(()=>{}); }
       save();
-    } else if (dept.lockedDeviceId !== myDeviceId) {
+    } else {
       show('blocked-view');
     } else {
       const dash = dashes.find(d => d.id === dashParam);
