@@ -376,7 +376,7 @@ let dashes = [];  // {id, name, deptId, link}
 //  GCP BIGQUERY API
 // ═══════════════════════════
 // Set this to your Cloud Run API URL after deploying
-let API_URL = localStorage.getItem('pbi_api_url') || '';
+let API_URL = localStorage.getItem('pbi_api_url') || 'https://powerbi-portal-api-174773483931.us-central1.run.app';
 
 async function apiGet(path) {
   const res = await fetch(API_URL + path);
@@ -601,9 +601,16 @@ function addDash(deptId) {
   const name = document.getElementById('dn-'+deptId).value.trim();
   const link = document.getElementById('dl2-'+deptId).value.trim();
   if (!name || !link) { toast('Fill both name and link', true); return; }
-  dashes.push({ id:uid(), name, deptId, link });
+  const newDash = { id:uid(), name, deptId, link };
+  dashes.push(newDash);
+  if (API_URL) {
+    apiPost('/dashboards', newDash)
+      .then(() => toast('Dashboard added ✓'))
+      .catch(e => toast('Dashboard added locally but cloud sync failed: ' + e.message, true));
+  } else {
+    toast('Dashboard added ✓');
+  }
   save(); renderAdmin();
-  toast('Dashboard added ✓');
 }
 
 function deleteDash(id) {
