@@ -127,21 +127,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 /* DEPT PUBLIC VIEW */
 .dv-sub{padding:16px 24px 0;font-size:13px;color:var(--txm)}
-.dash-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;padding:16px 24px 36px}
-.dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:0;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;height:120px}
+.dash-pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:16px 24px 36px}
+.dash-pub-card{background:#fff;border:1.5px solid var(--gb);border-radius:var(--r);padding:0;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;height:80px}
 .dash-pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gl),var(--g))}
-.dash-pub-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(31,94,26,.12);border-color:var(--gl)}
-.dash-pub-card h3{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px;padding:0 12px;line-height:1.4}
-.dash-pub-card span{font-size:10px;font-weight:600;color:var(--gl);letter-spacing:.5px}
+.dash-pub-card:hover{transform:translateY(-3px);box-shadow:0 4px 14px rgba(31,94,26,.12);border-color:var(--gl)}
+.dash-pub-card h3{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px;padding:0 10px;line-height:1.3}
+.dash-pub-card span{font-size:9px;font-weight:600;color:var(--gl);letter-spacing:.5px}
 
 /* FULLSCREEN IFRAME */
 #iframe-view{position:fixed;inset:0;z-index:200;background:#fff}
 #dashFrame{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-#iframe-float-btns{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;gap:10px}
-#iframe-float-btns button{background:var(--g);color:#fff;border:none;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(0,0,0,0.3);transition:.2s;display:flex;align-items:center;gap:6px}
-#iframe-float-btns button:hover{background:var(--gm);transform:translateY(-2px)}
-#btn-back{padding:10px 20px}
-#btn-refresh{width:44px;height:44px;border-radius:50%!important;padding:0!important;justify-content:center;font-size:20px}
+#btn-back{position:fixed;top:16px;left:16px;z-index:9999;background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(0,0,0,0.3);display:flex;align-items:center;gap:6px;transition:.2s}
+#btn-back:hover{background:var(--gm);transform:translateY(-1px)}
+#btn-refresh{position:fixed;top:16px;right:16px;z-index:9999;background:var(--g);color:#fff;border:none;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,0.3);transition:.2s}
+#btn-refresh:hover{background:var(--gm);transform:translateY(-1px)}
+@keyframes spinning{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+#btn-refresh.refreshing{animation:spinning .7s linear infinite}
 
 /* STATIC VIEWS */
 .static-view{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:40px 20px}
@@ -273,11 +274,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--gp);color:var(--tx);min-h
 
 <!-- ══ IFRAME VIEW ══ -->
 <div id="iframe-view" class="view">
+  <button id="btn-back">← Back</button>
+  <button id="btn-refresh" title="Refresh dashboard">↻</button>
   <iframe id="dashFrame"></iframe>
-  <div id="iframe-float-btns">
-    <button id="btn-back">← Back</button>
-    <button id="btn-refresh" title="Refresh">↻</button>
-  </div>
 </div>
 
 <!-- ══ NOT FOUND ══ -->
@@ -538,7 +537,7 @@ function renderAdmin() {
     const card = document.createElement('div');
     card.className = 'dept-card';
     card.innerHTML = `
-      <div class="dc-head" onclick="toggleCollapse('${dept.id}')">
+      <div class="dc-head" id="dch-${dept.id}" onclick="toggleCollapse('${dept.id}')">
         <h3>${esc(dept.name)} <span class="dc-badge">${myDashes.length} dashboards</span></h3>
         <div class="dc-actions" onclick="event.stopPropagation()">
           <button class="icn-btn" onclick="toggleAddDash('${dept.id}')" title="Add Dashboard">＋</button>
@@ -629,8 +628,11 @@ function deleteDept(id) {
 //  TOGGLE SHARE
 // ══════════════════════════════
 function toggleCollapse(id) {
-  const card = document.querySelector(`[onclick="toggleCollapse('${id}')"]`).closest('.dept-card');
-  if (card) card.classList.toggle('collapsed');
+  const head = document.getElementById('dch-' + id);
+  if (!head) return;
+  const card = head.closest('.dept-card');
+  if (!card) return;
+  card.classList.toggle('collapsed');
 }
 
 function toggleShare(id, enabled) {
@@ -801,16 +803,21 @@ document.getElementById('btn-back').onclick = function() {
 
 document.getElementById('btn-refresh').onclick = function() {
   const frame = document.getElementById('dashFrame');
-  const src = frame.src;
+  const src = sessionStorage.getItem('pbi_link') || frame.src;
   if (!src) return;
-  const spin = this;
-  spin.style.animation = 'spin .7s linear infinite';
+  const btn = this;
+  btn.classList.add('refreshing');
+  btn.style.pointerEvents = 'none';
   frame.src = '';
   setTimeout(() => {
     frame.src = src;
-    frame.onload = () => { spin.style.animation = ''; };
-    setTimeout(() => { spin.style.animation = ''; }, 8000);
-  }, 150);
+    const restore = () => {
+      btn.classList.remove('refreshing');
+      btn.style.pointerEvents = 'auto';
+    };
+    frame.onload = restore;
+    setTimeout(restore, 10000);
+  }, 200);
 };
 
 // ══════════════════════════════
